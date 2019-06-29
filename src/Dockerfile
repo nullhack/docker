@@ -33,6 +33,7 @@ RUN set -ex \
     && apt-get install -y --no-install-recommends curl \
     && apt-get install -y --no-install-recommends postgresql-client \
     && apt-get install -y --no-install-recommends redis-tools \
+    && apt-get install -y --no-install-recommends openssl \
     # installing python dependencies
     && pip3 install -U pip setuptools wheel \
     && pip3 install -r "${SCRIPTS}/python_requirements.txt" \
@@ -49,6 +50,7 @@ RUN set -ex \
         /usr/share/doc \
         /usr/share/doc-base
 
-EXPOSE 8080 5555 8793
+EXPOSE 8080 5555
 
-ENTRYPOINT ./entrypoint.sh run
+ENTRYPOINT ./entrypoint.sh
+
