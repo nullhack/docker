@@ -1,0 +1,7 @@
+crypto
+celery
+postgres
+#hive
+#jdbc
+#mysql
+ssh

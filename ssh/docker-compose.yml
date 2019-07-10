@@ -1,0 +1,14 @@
+version: '3.6'
+
+services:
+  ssh:
+    environment:
+      - PASSWORD=${PASSWORD:?PASSWORD}
+      - ROOT_PASSWORD=${ROOT_PASSWORD:?ROOT_PASSWORD}
+    image: ${SSH_IMAGE:?SSH_IMAGE}
+    networks:
+      - default
+    ports:
+      - ${SSH_HOST_PORT:?SSH_HOST_PORT}:${SSH_PORT:?SSH_PORT}
+    restart: unless-stopped
+
