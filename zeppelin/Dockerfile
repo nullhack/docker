@@ -18,11 +18,17 @@ RUN echo "$LOG_TAG Install java8" && \
     apt-get install -y openjdk-8-jdk && \
     rm -rf /var/lib/apt/lists/*
 
-ENV TINI_VERSION v0.18.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-RUN chmod +x /tini
+RUN echo "$LOG_TAG Install tini" && \
+    apt-get -y update && \
+    apt-get install -y tini && \
+    rm -rf /var/lib/apt/lists/*
 
-ENTRYPOINT [ "/tini", "--" ]
+#ENV TINI_VERSION v0.18.0
+#ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+#RUN chmod +x /tini
+
+#ENTRYPOINT [ "/tini", "--" ]
+ENTRYPOINT [ "tini", "--" ]
 ENV Z_HOME="/zeppelin"
 WORKDIR ${Z_HOME}
 CMD ["bin/zeppelin.sh"]

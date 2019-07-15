@@ -1,7 +1,7 @@
 version: '3.6'
 services:
   postgres:
-    build: .
+    build: ./src
     image: postgres:latest
     #command: postgres -c ssl=on -c ssl_cert_file=/etc/ssl/domain.crt -c ssl_key_file=/etc/ssl/domain.key
     restart: unless-stopped

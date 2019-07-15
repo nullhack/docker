@@ -1,0 +1,33 @@
+#!/bin/bash
+
+environment_base_rel_path=${1:?A path to an environment template must be provided}
+environment_base_abs_path=$( cd "$environment_base_rel_path" ; pwd -P )
+environment_base_folder=$(basename $environment_base_abs_path)
+environment_file_name=.env
+environment_password_size=32
+environment_domain=localhost
+
+gen_password () { head /dev/urandom | tr -dc A-Za-z0-9 | head -c ${environment_password_size}; }
+gen_htpasswd () { docker run --rm --entrypoint htpasswd registry:2 -Bbn ${1} ${2}; }
+print_export_env () { printenv | sort | sed -e "s/^[^#].*/export &/g" | sed -e "s/.*/&'/g" | sed "s/=/='/"; }
+print_env () { printenv | sort ; }
+
+# TODO: check source|bash and set paths accordingly
+# TODO: use only variables present in docker-file and show alert of missing
+# TODO: multiple environment
+# TODO: point to env.template
+
+echo "# creating environment"
+
+# traefik configuration
+export TRAEFIK_AUTH_USER=$(gen_password)
+export TRAEFIK_AUTH_PASSWORD=$(gen_password)
+export TRAEFIK_AUTH_BASIC=$(gen_htpasswd ${TRAEFIK_AUTH_USER} ${TRAEFIK_AUTH_PASSWORD})
+export TRAEFIK_INTERFACE_DOMAIN=${environment_base_folder}.${environment_domain}
+export TRAEFIK_ENABLE=true
+
+# TODO: check if the file exist
+source "$environment_base_abs_path/env.template"
+
+print_export_env
+print_env > "${environment_base_abs_path}/.env"
