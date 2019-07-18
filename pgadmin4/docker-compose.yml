@@ -12,6 +12,7 @@ services:
       - traefik.port=${PGADMIN_PORT:?PGADMIN_PORT}
     ports:
        - ${PGADMIN_HOST_PORT:?PGADMIN_HOST_PORT}:${PGADMIN_PORT:?PGADMIN_PORT}
+    restart: unless-stopped
     volumes:
        - pgadmin-data:/var/lib/pgadmin
        - pgadmin-config:/pgadmin4

@@ -1,0 +1,21 @@
+version: '3.6'
+services:
+  zeppelin:
+    build: ./src
+    image: ${ZEPPELIN_IMAGE:?ZEPPELIN_IMAGE}
+    labels:
+      - traefik.enable=${TRAEFIK_ENABLE:?TRAEFIK_ENABLE}
+      - traefik.frontend.auth.basic=${TRAEFIK_AUTH_BASIC:?TRAEFIK_AUTH_BASIC}
+      - traefik.frontend.rule=Host:${TRAEFIK_INTERFACE_DOMAIN:?TRAEFIK_INTERFACE_DOMAIN}
+      - traefik.port=${ZEPPELIN_PORT:?ZEPPELIN_PORT}
+    ports:
+       - ${ZEPPELIN_HOST_PORT:?ZEPPELIN_HOST_PORT}:${ZEPPELIN_PORT:?ZEPPELIN_PORT}
+    restart: unless-stopped
+    volumes:
+       - ./notebook:/zeppelin/notebook
+       - zeppelin-helium:/zeppelin/local-repo
+       - zeppelin-conf:/zeppelin/conf
+ 
+volumes:
+  zeppelin-helium:
+  zeppelin-conf:

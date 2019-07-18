@@ -16,6 +16,7 @@ services:
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${TRAEFIK_CONFIG_HOST_PATH:?TRAEFIK_CONFIG_HOST_PATH}:${TRAEFIK_CONFIG_PATH:?TRAEFIK_CONFIG_PATH}:ro
-      - ${TRAEFIK_ACME_HOST_PATH:?TRAEFIK_ACME_HOST_PATH}:${TRAEFIK_ACME_PATH:?TRAEFIK_ACME_PATH}
+      - traefik-conf:/etc/traefik
  
+volumes:
+  traefik-conf:
