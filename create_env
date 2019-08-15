@@ -1,33 +1,27 @@
 #!/bin/bash
 
-environment_base_rel_path=${1:?A path to an environment template must be provided}
-environment_base_abs_path=$( cd "$environment_base_rel_path" ; pwd -P )
-environment_base_folder=$(basename $environment_base_abs_path)
-environment_file_name=.env
-environment_password_size=32
-environment_domain=localhost
+if [ ! -f "${1}" ] || [ ! $(basename ${1}) == 'env.template' ]; then >&2 echo "A path to a valid 'env.template' must be provided" && exit 1; fi
+environment_base_file_name=$(basename ${1})
+environment_base_rel_path=$(dirname ${1})
+environment_base_abs_path=$(cd ${environment_base_rel_path} ; pwd -P)
+environment_base_env_template="${environment_base_abs_path}/env.template"
 
-gen_password () { head /dev/urandom | tr -dc A-Za-z0-9 | head -c ${environment_password_size}; }
+# default functions
+gen_password () { head /dev/urandom | tr -dc A-Za-z0-9 | head -c ${1:-32}; }
 gen_htpasswd () { docker run --rm --entrypoint htpasswd registry:2 -Bbn ${1} ${2}; }
-print_export_env () { printenv | sort | sed -e "s/^[^#].*/export &/g" | sed -e "s/.*/&'/g" | sed "s/=/='/"; }
-print_env () { printenv | sort ; }
 
-# TODO: check source|bash and set paths accordingly
-# TODO: use only variables present in docker-file and show alert of missing
-# TODO: multiple environment
-# TODO: point to env.template
+# source variables
+source ${environment_base_env_template}
 
-echo "# creating environment"
+# print variables
+LIST_OF_VARIABLES=$(grep -rhIEo 'export [^ =]+' ${environment_base_env_template} | cut -c 7- | sort)
 
-# traefik configuration
-export TRAEFIK_AUTH_USER=$(gen_password)
-export TRAEFIK_AUTH_PASSWORD=$(gen_password)
-export TRAEFIK_AUTH_BASIC=$(gen_htpasswd ${TRAEFIK_AUTH_USER} ${TRAEFIK_AUTH_PASSWORD})
-export TRAEFIK_INTERFACE_DOMAIN=${environment_base_folder}.${environment_domain}
-export TRAEFIK_ENABLE=true
-
-# TODO: check if the file exist
-source "$environment_base_abs_path/env.template"
-
-print_export_env
-print_env > "${environment_base_abs_path}/.env"
+for x in ${LIST_OF_VARIABLES}
+do
+  if [ ${2:-''} == '-e' ]
+  then
+    echo "export ${x}='${!x}'"
+  else
+    echo "${x}=${!x}"
+  fi
+done

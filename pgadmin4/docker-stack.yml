@@ -1,0 +1,39 @@
+version: '3.6'
+services:
+  pgadmin:
+    environment:
+       - PGADMIN_DEFAULT_EMAIL=${PGADMIN__MAIN__USERNAME:?PGADMIN__MAIN__USERNAME}
+       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN__MAIN__PASSWORD:?PGADMIN__MAIN__PASSWORD}
+    image: dpage/pgadmin4:4.11
+    ports:
+       - 80
+    restart: unless-stopped
+    volumes:
+       - pgadmin-data:/var/lib/pgadmin
+       - pgadmin-config:/pgadmin4
+    networks:
+      - public-network
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - traefik.frontend.rule=Host:${PGADMIN__TRAEFIK__URL:?PGADMIN__TRAEFIK__URL}
+        - traefik.frontend.auth.basic=${PGADMIN__TRAEFIK__AUTH:?PGADMIN__TRAEFIK__AUTH}
+        - traefik.enable=true
+        - traefik.port=80
+        - traefik.tags=public-network
+        - traefik.docker.network=public-network
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+
+networks:
+  public-network:
+    external: true
+
+volumes:
+  pgadmin-data:
+  pgadmin-config:
