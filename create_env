@@ -7,8 +7,9 @@ environment_base_abs_path=$(cd ${environment_base_rel_path} ; pwd -P)
 environment_base_env_template="${environment_base_abs_path}/env.template"
 
 # default functions
-gen_password () { head /dev/urandom | tr -dc A-Za-z0-9 | head -c ${1:-32}; }
+gen_password () { docker run --rm ubuntu:19.04 bash -c "head /dev/urandom | tr -dc A-Za-z0-9 | head -c ${1:-32}"; }
 gen_htpasswd () { docker run --rm --entrypoint htpasswd registry:2 -Bbn ${1} ${2}; }
+gen_fernet_key () { docker run --rm continuumio/miniconda3 python3 -c 'from cryptography.fernet import Fernet; FERNET_KEY=Fernet.generate_key().decode(); print(str(FERNET_KEY))'; }
 
 # source variables
 source ${environment_base_env_template}

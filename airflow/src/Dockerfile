@@ -4,18 +4,17 @@
 
 FROM ubuntu:19.04
 
-ARG AIRFLOW_VERSION=1.10.3
+ARG AIRFLOW_VERSION=1.10.4
 ARG AIRFLOW_GPL_UNIDECODE=yes
 ENV DEBIAN_FRONTEND=noninteractive
 ENV C_FORCE_ROOT=true
 ENV SCRIPTS=/scripts
-ENV AIRFLOW_HOME=/data
+ENV AIRFLOW_HOME=/root/airflow
 
 WORKDIR ${SCRIPTS}
 
 COPY ./airflow_requirements.txt ${SCRIPTS}/airflow_requirements.txt
 COPY ./python_requirements.txt ${SCRIPTS}/python_requirements.txt
-COPY ./entrypoint.sh ${SCRIPTS}/entrypoint.sh
 COPY ./airflow_config.py ${SCRIPTS}/airflow_config.py
 
 RUN set -ex \
@@ -49,6 +48,8 @@ RUN set -ex \
         /usr/share/man \
         /usr/share/doc \
         /usr/share/doc-base
+
+COPY ./entrypoint.sh ${SCRIPTS}/entrypoint.sh
 
 EXPOSE 8080 5555
 

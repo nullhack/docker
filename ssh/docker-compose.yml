@@ -4,17 +4,12 @@ services:
   ssh:
     build: ./src
     environment:
-      - PASSWORD=${PASSWORD:?PASSWORD}
-      - ROOT_PASSWORD=${ROOT_PASSWORD:?ROOT_PASSWORD}
-    image: ${SSH_IMAGE:?SSH_IMAGE}
-    labels:
-      - traefik.enable=${TRAEFIK_ENABLE:?TRAEFIK_ENABLE}
-      - traefik.frontend.auth.basic=${TRAEFIK_AUTH_BASIC:?TRAEFIK_AUTH_BASIC}
-      - traefik.frontend.rule=Host:${TRAEFIK_INTERFACE_DOMAIN:?TRAEFIK_INTERFACE_DOMAIN}
-      - traefik.port=${SSH_PORT:?SSH_PORT}
+      - PASSWORD=${SSH__MAIN__PASSWORD:?SSH__MAIN__PASSWORD}
+      - ROOT_PASSWORD=${SSH__MAIN__ROOT_PASSWORD:?SSH__MAIN__ROOT_PASSWORD}
+    image: ssh:local
     networks:
       - default
     ports:
-      - ${SSH_HOST_PORT:?SSH_HOST_PORT}:${SSH_PORT:?SSH_PORT}
+      - 22
     restart: unless-stopped
 

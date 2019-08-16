@@ -2,7 +2,6 @@
 
 import configparser
 import os
-import subprocess
 
 AIRFLOW_HOME = os.environ.get('AIRFLOW_HOME')
 CONFIG_PATH = os.path.join(AIRFLOW_HOME, 'airflow.cfg')

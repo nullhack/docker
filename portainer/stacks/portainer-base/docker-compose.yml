@@ -1,0 +1,14 @@
+version: '3.6'
+
+services:
+  portainer:
+    command: -H unix:///var/run/docker.sock --no-auth
+    image: portainer/portainer:1.21.0
+    networks:
+      - default
+    ports:
+      - 9000:9000
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
