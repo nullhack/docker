@@ -1,44 +1,33 @@
 # AUTHOR: Eric Lopes
 # DESCRIPTION: Airflow all in one container
-# BUILD: docker build --rm -t airflow .
+# BUILD: docker build -t airflow:local .
 
-FROM ubuntu:19.04
+FROM python:3-slim
 
 ARG AIRFLOW_VERSION=1.10.4
 ARG AIRFLOW_GPL_UNIDECODE=yes
+
 ENV DEBIAN_FRONTEND=noninteractive
 ENV C_FORCE_ROOT=true
 ENV SCRIPTS=/scripts
-ENV AIRFLOW_HOME=/root/airflow
-
-WORKDIR ${SCRIPTS}
+ENV AIRFLOW_HOME=/airflow
 
 COPY ./airflow_requirements.txt ${SCRIPTS}/airflow_requirements.txt
 COPY ./python_requirements.txt ${SCRIPTS}/python_requirements.txt
 COPY ./airflow_config.py ${SCRIPTS}/airflow_config.py
+COPY ./entrypoint.sh ${SCRIPTS}/entrypoint.sh
 
 RUN set -ex \
-    && build_deps=' \
-        build-essential \
-        default-libmysqlclient-dev \
-        apt-utils \
-        ' \
     && apt-get update -y \
     && apt-get upgrade -y \
     # installing apt dependencies
-    && apt-get install -y --no-install-recommends $build_deps \
-    && apt-get install -y --no-install-recommends python3-dev \
-    && apt-get install -y --no-install-recommends python3-pip \
+    && apt-get install -y --no-install-recommends build-essential \
     && apt-get install -y --no-install-recommends curl \
-    && apt-get install -y --no-install-recommends postgresql-client \
-    && apt-get install -y --no-install-recommends redis-tools \
-    && apt-get install -y --no-install-recommends openssl \
     # installing python dependencies
-    && pip3 install -U pip setuptools wheel \
     && pip3 install -r "${SCRIPTS}/python_requirements.txt" \
     && pip3 install apache-airflow["$(grep -v '^#' ${SCRIPTS}/airflow_requirements.txt | tr -s "( |\n)" , | head -c -1)"]==${AIRFLOW_VERSION} \    
     # removing unecessary files
-    && apt-get  purge --auto-remove -y ${build_deps} \
+    && apt-get  purge --auto-remove -y build-essential \
     && apt-get autoremove -y --purge \
     && apt-get clean \
     && rm -vrf \
@@ -49,9 +38,9 @@ RUN set -ex \
         /usr/share/doc \
         /usr/share/doc-base
 
-COPY ./entrypoint.sh ${SCRIPTS}/entrypoint.sh
+WORKDIR ${SCRIPTS}
 
-EXPOSE 8080 5555
+EXPOSE 8080 5555 8793
 
 ENTRYPOINT ./entrypoint.sh
 

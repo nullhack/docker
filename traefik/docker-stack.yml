@@ -18,7 +18,7 @@ services:
         preferences:
           - spread: node.id
       labels:
-        - traefik.frontend.rule=PathPrefixStrip:/traefik
+        - traefik.frontend.rule=Host:${TRAEFIK__TRAEFIK__URL:?TRAEFIK__TRAEFIK__URL}
         - traefik.enable=true
         - traefik.port=8080
         - traefik.tags=public-network

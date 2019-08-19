@@ -15,8 +15,8 @@ for k in os.environ.keys():
         config[section][conf] = value
 config.write(open(CONFIG_PATH, 'w'))
 
-airflow_user = os.environ.get('AIRFLOW_USER')
-airflow_password = os.environ.get('AIRFLOW_PASSWORD')
+airflow_user = os.environ.get('AIRFLOW_USER', False)
+airflow_password = os.environ.get('AIRFLOW_PASSWORD', False)
 if airflow_user and airflow_password:
     import airflow
     from airflow import models, settings
@@ -31,3 +31,4 @@ if airflow_user and airflow_password:
     session.add(user)
     session.commit()
     session.close()
+
