@@ -1,4 +1,5 @@
 version: '3.6'
+
 services:
   postgres:
     environment:
@@ -16,14 +17,41 @@ services:
 
   flower:
     depends_on:
-      - webserver
       - postgres
       - redis
+      - webserver
+    deploy:
+      labels:
+        - traefik.docker.network=airflow_public_network
+        - traefik.enable=true
+        - traefik.frontend.rule=Host:${AIRFLOW__TRAEFIK_FLOWER__URL:?AIRFLOW__TRAEFIK_FLOWER__URL}
+        - traefik.port=5555
+        - traefik.tags=public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.frontend.auth.basic.users=${AIRFLOW__TRAEFIK_FLOWER__AUTH:?AIRFLOW__TRAEFIK_FLOWER__AUTH}
+        - traefik.webservice.frontend.entryPoints=https
+      placement:
+        constraints:
+          - node.role == manager
+        preferences:
+          - spread: node.id
+      replicas: 1
     #entrypoint: ./entrypoint.sh airflow flower --basic_auth ${AIRFLOW__FLOWER__AUTH}
     entrypoint: ./entrypoint.sh airflow flower
+    healthcheck:
+      interval: 30s
+      retries: 3
+      test: curl --fail http://0.0.0.0:5555 || exit 1
+      timeout: 30s
     image: airflow:local
+    networks:
+      - airflow_public_network
+      - default
     ports:
-      - 5555:5555
+      - 5555
     volumes:
       - airflow-conf:/airflow
 
@@ -35,11 +63,13 @@ services:
 
   scheduler:
     depends_on:
-      - webserver
       - postgres
       - redis
+      - webserver
     entrypoint: ./entrypoint.sh airflow scheduler
     image: airflow:local
+    networks:
+      - default
     volumes:
       - ../../dags:/dags
       - airflow-conf:/airflow
@@ -50,11 +80,11 @@ services:
       - redis
     deploy:
       labels:
-        - traefik.docker.network=public-network
+        - traefik.docker.network=airflow_public_network
         - traefik.enable=true
         - traefik.frontend.rule=Host:${AIRFLOW__TRAEFIK__URL:?AIRFLOW__TRAEFIK__URL}
         - traefik.port=8080
-        - traefik.tags=public-network
+        - traefik.tags=public
         # Traefik service that listens to HTTP
         - traefik.redirectorservice.frontend.entryPoints=http
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
@@ -90,27 +120,29 @@ services:
       timeout: 30s
     image: airflow:local
     networks:
+      - airflow_public_network
       - default
-      - public-network
     ports:
-      - 8080:8080
+      - 8080
     volumes:
       - ../../dags:/dags
       - airflow-conf:/airflow
 
   worker:
     depends_on:
-      - webserver
       - postgres
       - redis
+      - webserver
     entrypoint: ./entrypoint.sh airflow worker
     image: airflow:local
+    networks:
+      - default
     volumes:
       - ../../dags:/dags
       - airflow-conf:/airflow
 
 networks:
-  public-network:
+  airflow_public_network:
     external: true
 
 volumes:

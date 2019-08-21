@@ -1,4 +1,5 @@
 version: '3.6'
+
 services:
   postgres:
     environment:
@@ -19,11 +20,11 @@ services:
       - postgres
     deploy:
       labels:
-        - traefik.docker.network=public-network
+        - traefik.docker.network=airflow_public_network
         - traefik.enable=true
         - traefik.frontend.rule=Host:${AIRFLOW__TRAEFIK__URL:?AIRFLOW__TRAEFIK__URL}
         - traefik.port=8080
-        - traefik.tags=public-network
+        - traefik.tags=public
         # Traefik service that listens to HTTP
         - traefik.redirectorservice.frontend.entryPoints=http
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
@@ -57,16 +58,16 @@ services:
       timeout: 30s
     image: airflow:local
     networks:
+      - airflow_public_network
       - default
-      - public-network
     ports:
-      - 8080:8080
+      - 8080
     volumes:
       - ../../dags:/dags
       - airflow-conf:/airflow
 
 networks:
-  public-network:
+  airflow_public_network:
     external: true
 
 volumes:

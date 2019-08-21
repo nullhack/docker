@@ -1,0 +1,38 @@
+version: '3.6'
+services:
+  zeppelin:
+    build: ./src
+    deploy:
+      labels:
+        - traefik.docker.network=zeppelin_public_network
+        - traefik.enable=true
+        - traefik.frontend.rule=Host:${ZEPPELIN__TRAEFIK__URL:?ZEPPELIN__TRAEFIK__URL}
+        - traefik.port=8080
+        - traefik.tags=public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.frontend.auth.basic.users=${ZEPPELIN__TRAEFIK__AUTH:?ZEPPELIN__TRAEFIK__AUTH}
+        - traefik.webservice.frontend.entryPoints=https
+      placement:
+        preferences:
+          - spread: node.id
+      replicas: 1
+    image: zeppelin:local
+    networks:
+      - zeppelin_public_network
+    ports:
+      - 8080
+    volumes:
+      - ./notebook:/zeppelin/notebook
+      - zeppelin-helium:/zeppelin/local-repo
+      - zeppelin-conf:/zeppelin/conf
+
+networks:
+  zeppelin_public_network:
+    external: true
+
+volumes:
+  zeppelin-helium:
+  zeppelin-conf:

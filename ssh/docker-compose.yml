@@ -8,8 +8,11 @@ services:
       - ROOT_PASSWORD=${SSH__MAIN__ROOT_PASSWORD:?SSH__MAIN__ROOT_PASSWORD}
     image: ssh:local
     networks:
-      - default
+      - ssh_public_network
     ports:
       - 22
     restart: unless-stopped
 
+networks:
+  ssh_public_network:
+    external: true
