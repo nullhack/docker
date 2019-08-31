@@ -14,8 +14,10 @@ ENV AIRFLOW_HOME=/airflow
 
 COPY ./airflow_requirements.txt ${SCRIPTS}/airflow_requirements.txt
 COPY ./python_requirements.txt ${SCRIPTS}/python_requirements.txt
-COPY ./airflow_config.py ${SCRIPTS}/airflow_config.py
+COPY ./airflow_change_config.py ${SCRIPTS}/airflow_change_config.py
+COPY ./airflow_add_user.py ${SCRIPTS}/airflow_add_user.py
 COPY ./entrypoint.sh ${SCRIPTS}/entrypoint.sh
+COPY ./airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
 RUN set -ex \
     && apt-get update -y \

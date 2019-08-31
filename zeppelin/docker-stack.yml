@@ -4,7 +4,7 @@ services:
     build: ./src
     deploy:
       labels:
-        - traefik.docker.network=zeppelin_public_network
+        - traefik.docker.network=public_network
         - traefik.enable=true
         - traefik.frontend.rule=Host:${ZEPPELIN__TRAEFIK__URL:?ZEPPELIN__TRAEFIK__URL}
         - traefik.port=8080
@@ -21,6 +21,7 @@ services:
       replicas: 1
     image: zeppelin:local
     networks:
+      - public_network
       - zeppelin_public_network
     ports:
       - 8080
@@ -30,6 +31,8 @@ services:
       - zeppelin-conf:/zeppelin/conf
 
 networks:
+  public_network:
+    external: true
   zeppelin_public_network:
     external: true
 

@@ -3,9 +3,9 @@
 if ([ "$1" = "airflow" ] && [ "$2" = "webserver" ]) || [ "$1" = "run" ]
 then
   >&2 echo "Starting webserver"
+  python3 "${SCRIPTS}/airflow_change_config.py"
   airflow upgradedb
-  python3 "${SCRIPTS}/airflow_config.py"
-  airflow upgradedb
+  python3 "${SCRIPTS}/airflow_add_user.py"
 fi
 
 if [ "$1" = "run" ]

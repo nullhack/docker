@@ -1,0 +1,15 @@
+version: '3.6'
+
+services:
+  redis:
+    command: redis-server --requirepass ${REDIS__MAIN__PASSWORD:?REDIS__MAIN__PASSWORD}
+    image: redis:5
+    networks:
+      - redis_public_network
+    ports:
+      - ${REDIS__MAIN__PORT:?REDIS__MAIN__PORT}
+
+networks:
+  redis_public_network:
+    external: true
+

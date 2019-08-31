@@ -22,7 +22,7 @@ services:
       --api
     deploy:
       labels:
-        - traefik.docker.network=traefik_public_network
+        - traefik.docker.network=public_network
         - traefik.enable=true
         - traefik.frontend.rule=Host:${TRAEFIK__TRAEFIK__URL:?TRAEFIK__TRAEFIK__URL}
         - traefik.port=8080
@@ -41,7 +41,7 @@ services:
       replicas: 1
     image: traefik:v1.7
     networks:
-      - traefik_public_network
+      - public_network
     ports:
       - target: 80
         published: 80
@@ -53,5 +53,5 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
        
 networks:
-  traefik_public_network:
+  public_network:
     external: true
