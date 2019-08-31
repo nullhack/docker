@@ -17,7 +17,6 @@ COPY ./python_requirements.txt ${SCRIPTS}/python_requirements.txt
 COPY ./airflow_change_config.py ${SCRIPTS}/airflow_change_config.py
 COPY ./airflow_add_user.py ${SCRIPTS}/airflow_add_user.py
 COPY ./entrypoint.sh ${SCRIPTS}/entrypoint.sh
-COPY ./airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
 RUN set -ex \
     && apt-get update -y \

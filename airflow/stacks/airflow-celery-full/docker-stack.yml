@@ -13,7 +13,7 @@ services:
     networks:
       - airflow_public_network
     volumes:
-      - airflow-pgdata:/var/lib/postgresql/data
+      - postgres-pgdata:/var/lib/postgresql/data
 
   flower:
     depends_on:
@@ -148,5 +148,5 @@ networks:
     external: true
 
 volumes:
-  airflow-pgdata:
+  postgres-pgdata:
   airflow-conf:
