@@ -40,7 +40,7 @@ services:
     ports:
       - 5555
     volumes:
-      - airflow-conf:/airflow
+      - conf:/airflow
 
   scheduler:
     depends_on:
@@ -55,7 +55,7 @@ services:
       - redis_public_network
     volumes:
       - ../../dags:/dags
-      - airflow-conf:/airflow
+      - conf:/airflow
 
   webserver:
     depends_on:
@@ -111,7 +111,7 @@ services:
       - 8080
     volumes:
       - ../../dags:/dags
-      - airflow-conf:/airflow
+      - conf:/airflow
 
   worker:
     depends_on:
@@ -126,7 +126,7 @@ services:
       - redis_public_network
     volumes:
       - ../../dags:/dags
-      - airflow-conf:/airflow
+      - conf:/airflow
 
 networks:
   airflow_public_network:
@@ -139,4 +139,4 @@ networks:
     external: true
 
 volumes:
-  airflow-conf:
+  conf:

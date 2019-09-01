@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-find /docker-entrypoint-initdb.d -mindepth 2 -type f -print0 | while read -d $'\0' f; do
+find /docker-entrypoint-initdb.d -mindepth 2 -type f -print0 | env LC_COLLATE=C sort -z | while read -d $'\0' f; do
   case "$f" in
     *.sh)
       if [ -x "$f" ]; then

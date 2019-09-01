@@ -27,8 +27,8 @@ services:
       - 8080
     volumes:
       - ./notebook:/zeppelin/notebook
-      - zeppelin-helium:/zeppelin/local-repo
-      - zeppelin-conf:/zeppelin/conf
+      - helium:/zeppelin/local-repo
+      - conf:/zeppelin/conf
 
 networks:
   public_network:
@@ -37,5 +37,5 @@ networks:
     external: true
 
 volumes:
-  zeppelin-helium:
-  zeppelin-conf:
+  helium:
+  conf:

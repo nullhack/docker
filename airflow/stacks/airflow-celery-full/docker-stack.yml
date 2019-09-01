@@ -13,7 +13,7 @@ services:
     networks:
       - airflow_public_network
     volumes:
-      - postgres-pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
 
   flower:
     depends_on:
@@ -53,7 +53,7 @@ services:
     ports:
       - 5555
     volumes:
-      - airflow-conf:/airflow
+      - conf:/airflow
 
   redis:
     command: redis-server --requirepass ${REDIS__AIRFLOW__PASSWORD:?REDIS__AIRFLOW__PASSWORD}
@@ -72,7 +72,7 @@ services:
       - airflow_public_network
     volumes:
       - ../../dags:/dags
-      - airflow-conf:/airflow
+      - conf:/airflow
 
   webserver:
     depends_on:
@@ -126,7 +126,7 @@ services:
       - 8080
     volumes:
       - ../../dags:/dags
-      - airflow-conf:/airflow
+      - conf:/airflow
 
   worker:
     depends_on:
@@ -139,7 +139,7 @@ services:
       - airflow_public_network
     volumes:
       - ../../dags:/dags
-      - airflow-conf:/airflow
+      - conf:/airflow
 
 networks:
   airflow_public_network:
@@ -148,5 +148,5 @@ networks:
     external: true
 
 volumes:
-  postgres-pgdata:
-  airflow-conf:
+  pgdata:
+  conf:

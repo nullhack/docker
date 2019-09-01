@@ -1,28 +1,28 @@
 version: '3.6'
 services:
   postgres:
-    build: ./src
     command: postgres -c ssl=on -c ssl_cert_file=/ssl/postgres.cert -c ssl_key_file=/ssl/postgres.key
     environment:
-      - POSTGRES_DB=${POSTGRES__MAIN__DB:?POSTGRES__MAIN__DB}
       - POSTGRES_PASSWORD=${POSTGRES__MAIN__PASSWORD:?POSTGRES__MAIN__PASSWORD}
       - POSTGRES_USER=${POSTGRES__MAIN__USER:?POSTGRES__MAIN__USER}
       # airflow user
-      - AIRFLOW_DB=${POSTGRES__AIRFLOW__DB:?POSTGRES__AIRFLOW__DB}
-      - AIRFLOW_PASSWORD=${POSTGRES__AIRFLOW__PASSWORD:?POSTGRES__AIRFLOW__PASSWORD}
-      - AIRFLOW_USER=${POSTGRES__AIRFLOW__USER:?POSTGRES__AIRFLOW__USER}
+      - POSTGRES__AIRFLOW__PASSWORD=${POSTGRES__AIRFLOW__PASSWORD:?POSTGRES__AIRFLOW__PASSWORD}
+      - POSTGRES__AIRFLOW__USER=${POSTGRES__AIRFLOW__USER:?POSTGRES__AIRFLOW__USER}
+      # airflow user
+      - POSTGRES__AIRFLOW_READ__PASSWORD=${POSTGRES__AIRFLOW_READ__PASSWORD:?POSTGRES__AIRFLOW_READ__PASSWORD}
+      - POSTGRES__AIRFLOW_READ__USER=${POSTGRES__AIRFLOW_READ__USER:?POSTGRES__AIRFLOW_READ__USER}
     image: postgres:local
     networks:
       - postgres_public_network
     ports:
       - 5432
-    restart: unless-stopped
     volumes:
-      - ./create-user:/docker-entrypoint-initdb.d/100-create-user
-      - ./create-schema:/docker-entrypoint-initdb.d/200-create-schema
-      - ./pgdump:/docker-entrypoint-initdb.d/300-pgdump
+      - ./sql/airflow:/docker-entrypoint-initdb.d/airflow
+      - postgres-data:/var/lib/postgresql/data
 
 networks:
   postgres_public_network:
     external: true
 
+volumes:
+  data:

@@ -15,7 +15,7 @@ gen_fernet_key () { docker run --rm continuumio/miniconda3 python3 -c 'from cryp
 source ${environment_base_env_template}
 
 # print variables
-LIST_OF_VARIABLES=$(grep -rhIEo 'export [^ =]+' ${environment_base_env_template} | cut -c 7- | sort)
+LIST_OF_VARIABLES=$(grep -rhIEo 'export [^ =]+' ${environment_base_env_template} | cut -c 7- | env LC_COLLATE=C sort)
 
 for x in ${LIST_OF_VARIABLES}
 do
