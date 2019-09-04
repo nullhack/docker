@@ -3,6 +3,7 @@ version: '3.6'
 services:
   jupyter:
     environment:
+      - USER_LOGIN=${USER_LOGIN:?USER_LOGIN}
       - ROOT_PASSWORD=${LAB__MAIN__ROOT_PASSWORD:?LAB__MAIN__ROOT_PASSWORD}
     image: lab:local
     networks:
