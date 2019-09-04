@@ -1,0 +1,16 @@
+version: '3.6'
+
+services:
+  jupyter:
+    environment:
+      - ROOT_PASSWORD=${LAB__MAIN__ROOT_PASSWORD:?LAB__MAIN__ROOT_PASSWORD}
+    image: lab:local
+    networks:
+      - lab_public_network
+    ports:
+      - 22
+      - 8000
+
+networks:
+  lab_public_network:
+    external: true
