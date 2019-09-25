@@ -22,6 +22,9 @@ RUN \
   jupyter labextension install jupyterlab-drawio &&\
   jupyter labextension install @krassowski/jupyterlab_go_to_definition 
 
+RUN pip install werkzeug==0.15.4
+
+
 WORKDIR /lab
 
 RUN jupyterhub --generate-config

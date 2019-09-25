@@ -9,11 +9,11 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES__AIRFLOW__PASSWORD:?POSTGRES__AIRFLOW__PASSWORD}
       - POSTGRES_PORT=${POSTGRES__AIRFLOW__PORT:?POSTGRES__AIRFLOW__PORT}
       - POSTGRES_USER=${POSTGRES__AIRFLOW__USER:?POSTGRES__AIRFLOW__USER}
-    image: postgres:11
+    image: postgres:12
     networks:
       - airflow_public_network
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - airflow_pgdata:/var/lib/postgresql/data
 
   webserver:
     depends_on:
@@ -63,8 +63,8 @@ services:
     ports:
       - 8080
     volumes:
-      - ../../dags:/dags
-      - conf:/airflow
+      - airflow_dags:/dags
+      - airflow_conf:/airflow
 
 networks:
   airflow_public_network:
@@ -73,5 +73,12 @@ networks:
     external: true
 
 volumes:
-  pgdata:
-  conf:
+  airflow_pgdata:
+    name: airflow_pgdata
+    external: false
+  airflow_conf:
+    name: airflow_conf
+    external: false
+  airflow_dags:
+    name: airflow_dags
+    external: true
