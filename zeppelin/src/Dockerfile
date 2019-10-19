@@ -1,4 +1,4 @@
-FROM ubuntu:19.04
+FROM ubuntu:19.10
 
 COPY ./python-requirements.txt /opt/python-requirements.txt
 
