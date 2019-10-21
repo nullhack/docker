@@ -2,9 +2,9 @@
 # DESCRIPTION: Airflow all in one container
 # BUILD: docker build -t airflow:local .
 
-FROM python:3-slim
+FROM ubuntu:19.10
 
-ARG AIRFLOW_VERSION=1.10.4
+ARG AIRFLOW_VERSION=1.10.5
 ARG AIRFLOW_GPL_UNIDECODE=yes
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -22,13 +22,11 @@ RUN set -ex \
     && apt-get update -y \
     && apt-get upgrade -y \
     # installing apt dependencies
-    && apt-get install -y --no-install-recommends build-essential \
-    && apt-get install -y --no-install-recommends curl \
+    && apt-get install -y curl libpq-dev build-essential python3 python3-pip\
     # installing python dependencies
     && pip3 install -r "${SCRIPTS}/python_requirements.txt" \
     && pip3 install apache-airflow["$(grep -v '^#' ${SCRIPTS}/airflow_requirements.txt | tr -s "( |\n)" , | head -c -1)"]==${AIRFLOW_VERSION} \    
     # removing unecessary files
-    && apt-get  purge --auto-remove -y build-essential \
     && apt-get autoremove -y --purge \
     && apt-get clean \
     && rm -vrf \

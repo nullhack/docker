@@ -3,13 +3,14 @@ version: '3.6'
 services:
   agent:
     deploy:
-      mode: global
+      mode: replicated
       placement:
         constraints: 
           - node.platform.os == linux
+          - node.role == manager
     environment:
       AGENT_CLUSTER_ADDR: tasks.agent
-    image: portainer/agent:latest
+    image: portainer/agent:1.5.1
     networks:
       - portainer_public_network
     volumes:
@@ -24,11 +25,11 @@ services:
         constraints:
           - node.role == manager
       replicas: 1
-    image: portainer/portainer:latest
+    image: portainer/portainer:1.22.1
     networks:
       - portainer_public_network
     ports:
-      - "9000:9000"
+      - 9000:9000
 
 networks:
   portainer_public_network:
