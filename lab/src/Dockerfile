@@ -23,7 +23,8 @@ RUN \
   jupyter serverextension enable --sys-prefix --py jupyterlab_git &&\
   jupyter labextension install @jupyterlab/github &&\
   jupyter labextension install jupyterlab-drawio &&\
-  jupyter labextension install @krassowski/jupyterlab_go_to_definition
+  jupyter labextension install @krassowski/jupyterlab_go_to_definition &&\
+  jupyter labextension install @agoose77/jupyterlab-markup
 RUN \
   apt-get install --no-install-recommends openssh-server -y &&\
   apt-get install --no-install-recommends default-libmysqlclient-dev -y
