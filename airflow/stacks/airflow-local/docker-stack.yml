@@ -9,7 +9,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES__AIRFLOW__PASSWORD:?POSTGRES__AIRFLOW__PASSWORD}
       - POSTGRES_PORT=${POSTGRES__AIRFLOW__PORT:?POSTGRES__AIRFLOW__PORT}
       - POSTGRES_USER=${POSTGRES__AIRFLOW__USER:?POSTGRES__AIRFLOW__USER}
-    image: postgres:12
+    image: postgres:11
     networks:
       - airflow_public_network
     volumes:

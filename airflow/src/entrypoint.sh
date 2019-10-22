@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 
+if [ ! -z "$CUSTOM_PACKAGES" ]
+then
+  >&2 echo "Installing custom packages"
+  pip3 install $(echo $CUSTOM_PACKAGES | tr -s '(,|\n)' ' ' )
+fi
+
 if ([ "$1" = "airflow" ] && [ "$2" = "webserver" ]) || [ "$1" = "run" ]
 then
   >&2 echo "Configuring webserver"
-  airflow upgradedb
+  airflow initdb
   python3 "${SCRIPTS}/airflow_change_config.py"
   airflow upgradedb
   python3 "${SCRIPTS}/airflow_add_user.py"
