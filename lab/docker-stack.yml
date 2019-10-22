@@ -15,6 +15,11 @@ services:
         # Traefik service that listens to HTTPS
         - traefik.frontend.auth.basic.users=${LAB__TRAEFIK__AUTH:?LAB__TRAEFIK__AUTH}
         - traefik.webservice.frontend.entryPoints=https
+      mode: replicated
+      placement:
+        constraints:
+          - node.role == manager
+      replicas: 1
     healthcheck:
       interval: 30s
       retries: 3
@@ -28,8 +33,8 @@ services:
       - lab_public_network
       - public_network
     ports:
-      - 22
-      - 8000
+      - 2222:22
+      - 8000:8000
 
 networks:
   lab_public_network:
