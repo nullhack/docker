@@ -17,7 +17,7 @@ services:
     environment:
        - PGADMIN_DEFAULT_EMAIL=${PGADMIN__MAIN__USER:?PGADMIN__MAIN__USER}
        - PGADMIN_DEFAULT_PASSWORD=${PGADMIN__MAIN__PASSWORD:?PGADMIN__MAIN__PASSWORD}
-    image: dpage/pgadmin4:4.11
+    image: dpage/pgadmin4:4.14
     networks:
       - public_network
       - pgadmin_public_network

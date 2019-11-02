@@ -2,6 +2,7 @@
 .envx
 acme.json
 .git
+test_*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

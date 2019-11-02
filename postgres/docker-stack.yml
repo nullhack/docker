@@ -5,19 +5,12 @@ services:
     environment:
       - POSTGRES_PASSWORD=${POSTGRES__MAIN__PASSWORD:?POSTGRES__MAIN__PASSWORD}
       - POSTGRES_USER=${POSTGRES__MAIN__USER:?POSTGRES__MAIN__USER}
-      # airflow user
-      - POSTGRES__AIRFLOW__PASSWORD=${POSTGRES__AIRFLOW__PASSWORD:?POSTGRES__AIRFLOW__PASSWORD}
-      - POSTGRES__AIRFLOW__USER=${POSTGRES__AIRFLOW__USER:?POSTGRES__AIRFLOW__USER}
-      # airflow user
-      - POSTGRES__AIRFLOW_READ__PASSWORD=${POSTGRES__AIRFLOW_READ__PASSWORD:?POSTGRES__AIRFLOW_READ__PASSWORD}
-      - POSTGRES__AIRFLOW_READ__USER=${POSTGRES__AIRFLOW_READ__USER:?POSTGRES__AIRFLOW_READ__USER}
     image: postgres:local
     networks:
       - postgres_public_network
     ports:
       - 5432
     volumes:
-      - ./sql/airflow:/docker-entrypoint-initdb.d/airflow
       - postgres-data:/var/lib/postgresql/data
 
 networks:
@@ -25,4 +18,4 @@ networks:
     external: true
 
 volumes:
-  data:
+  postgres-data:
