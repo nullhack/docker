@@ -2,7 +2,7 @@ FROM ubuntu:19.10
 
 USER root
 
-ARG AIRFLOW_VERSION=1.10.5
+ARG AIRFLOW_VERSION=1.10.6
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN \
@@ -23,8 +23,14 @@ RUN \
   jupyter serverextension enable --sys-prefix --py jupyterlab_git &&\
   jupyter labextension install @jupyterlab/github &&\
   jupyter labextension install jupyterlab-drawio &&\
-  jupyter labextension install @krassowski/jupyterlab_go_to_definition &&\
-  jupyter labextension install @agoose77/jupyterlab-markup
+  jupyter labextension install @krassowski/jupyterlab_go_to_definition
+RUN \
+  apt-get install git -y &&\
+  git clone https://github.com/agoose77/jupyterlab-markup.git &&\
+  cd jupyterlab-markup &&\
+  npm install &&\
+  npm run build &&\
+  jupyter labextension link .
 RUN \
   pip3 install apache-airflow[cypto,celery,postgres,jdbc,mysql,ssh]==${AIRFLOW_VERSION} &&\
   pip3 install --no-cache-dir --upgrade numpy pandas matplotlib pandasql ipython jupyter_client ipykernel pyreadline protobuf jedi
