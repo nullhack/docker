@@ -52,14 +52,12 @@ CREATE OR REPLACE FUNCTION init_schema (TEXT) RETURNS TEXT AS $$
       -- set default permissions on tables
       EXECUTE 'ALTER DEFAULT PRIVILEGES REVOKE ALL ON TABLES FROM PUBLIC, ro, rw, dba, dbo';
       EXECUTE 'ALTER DEFAULT PRIVILEGES GRANT SELECT ON TABLES TO ro';
-      EXECUTE 'ALTER DEFAULT PRIVILEGES GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO rw';
-      EXECUTE 'ALTER DEFAULT PRIVILEGES GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON TABLES TO dba, dbo';
+      EXECUTE 'ALTER DEFAULT PRIVILEGES GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON TABLES TO rw, dba, dbo';
 
       -- set default privileges on sequences
       EXECUTE 'ALTER DEFAULT PRIVILEGES REVOKE ALL ON SEQUENCES FROM PUBLIC, ro, rw, dba, dbo';
       EXECUTE 'ALTER DEFAULT PRIVILEGES GRANT SELECT ON SEQUENCES TO ro';
-      EXECUTE 'ALTER DEFAULT PRIVILEGES GRANT USAGE, SELECT ON SEQUENCES TO rw';
-      EXECUTE 'ALTER DEFAULT PRIVILEGES GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO dba, dbo';
+      EXECUTE 'ALTER DEFAULT PRIVILEGES GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO rw, dba, dbo';
 
       -- set default privileges on functions
       EXECUTE 'ALTER DEFAULT PRIVILEGES REVOKE ALL ON FUNCTIONS FROM PUBLIC, ro, rw, dba, dbo';
@@ -88,14 +86,12 @@ CREATE OR REPLACE FUNCTION init_schema (TEXT) RETURNS TEXT AS $$
     -- set privileges on tables (schema)
     EXECUTE 'REVOKE ALL ON ALL TABLES IN SCHEMA ' || sch_name || ' FROM ro, rw, dba, dbo';
     EXECUTE 'GRANT SELECT ON ALL TABLES IN SCHEMA ' || sch_name || ' TO ro';
-    EXECUTE 'GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA ' || sch_name || ' TO rw';
-    EXECUTE 'GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON ALL TABLES IN SCHEMA ' || sch_name || ' TO dba, dbo';
+    EXECUTE 'GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON ALL TABLES IN SCHEMA ' || sch_name || ' TO rw, dba, dbo';
 
     -- set privileges on sequences (schema)
     EXECUTE 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA ' || sch_name || ' FROM PUBLIC, ro, rw, dba, dbo';
     EXECUTE 'GRANT SELECT ON ALL SEQUENCES IN SCHEMA ' || sch_name || ' TO ro';
-    EXECUTE 'GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA ' || sch_name || ' TO rw';
-    EXECUTE 'GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA ' || sch_name || ' TO dba, dbo';
+    EXECUTE 'GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA ' || sch_name || ' TO rw, dba, dbo';
 
     -- set privileges on functions (schema)
     EXECUTE 'REVOKE ALL ON ALL FUNCTIONS IN SCHEMA ' || sch_name || ' FROM PUBLIC, ro, rw, dba, dbo';
@@ -119,12 +115,12 @@ CREATE OR REPLACE FUNCTION init_schema (TEXT) RETURNS TEXT AS $$
     -- set default permissions on tables (schema)
     EXECUTE 'ALTER DEFAULT PRIVILEGES REVOKE ALL ON TABLES FROM ' || sch_role_ro || ', ' || sch_role_rw;
     EXECUTE 'ALTER DEFAULT PRIVILEGES IN SCHEMA ' || sch_name || ' GRANT SELECT ON TABLES TO ' || sch_role_ro;
-    EXECUTE 'ALTER DEFAULT PRIVILEGES IN SCHEMA ' || sch_name || ' GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO ' || sch_role_rw;
+    EXECUTE 'ALTER DEFAULT PRIVILEGES IN SCHEMA ' || sch_name || ' GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON TABLES TO ' || sch_role_rw;
 
     -- set default privileges on sequences (schema)
     EXECUTE 'ALTER DEFAULT PRIVILEGES REVOKE ALL ON SEQUENCES FROM ' || sch_role_ro || ', ' || sch_role_rw;
     EXECUTE 'ALTER DEFAULT PRIVILEGES IN SCHEMA ' || sch_name || ' GRANT SELECT ON SEQUENCES TO ' || sch_role_ro;
-    EXECUTE 'ALTER DEFAULT PRIVILEGES IN SCHEMA ' || sch_name || ' GRANT USAGE, SELECT ON SEQUENCES TO ' || sch_role_rw;
+    EXECUTE 'ALTER DEFAULT PRIVILEGES IN SCHEMA ' || sch_name || ' GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO ' || sch_role_rw;
 
     -- set default privileges on functions (schema)
     EXECUTE 'ALTER DEFAULT PRIVILEGES REVOKE ALL ON FUNCTIONS FROM ' || sch_role_ro || ', ' || sch_role_rw;
@@ -141,12 +137,12 @@ CREATE OR REPLACE FUNCTION init_schema (TEXT) RETURNS TEXT AS $$
     -- set privileges on tables (schema)
     EXECUTE 'REVOKE ALL ON ALL TABLES IN SCHEMA ' || sch_name || ' FROM ' || sch_role_ro || ', ' || sch_role_rw;
     EXECUTE 'GRANT SELECT ON ALL TABLES IN SCHEMA ' || sch_name || ' TO ' || sch_role_ro;
-    EXECUTE 'GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA ' || sch_name || ' TO ' || sch_role_rw;
+    EXECUTE 'GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON ALL TABLES IN SCHEMA ' || sch_name || ' TO ' || sch_role_rw;
 
     -- set privileges on sequences (schema)
     EXECUTE 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA ' || sch_name || ' FROM ' || sch_role_ro || ', ' || sch_role_rw;
     EXECUTE 'GRANT SELECT ON ALL SEQUENCES IN SCHEMA ' || sch_name || ' TO ' || sch_role_ro;
-    EXECUTE 'GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA ' || sch_name || ' TO ' || sch_role_rw;
+    EXECUTE 'GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA ' || sch_name || ' TO ' || sch_role_rw;
 
     -- set privileges on functions (schema)
     EXECUTE 'REVOKE ALL ON ALL FUNCTIONS IN SCHEMA ' || sch_name || ' FROM ' || sch_role_ro || ', ' || sch_role_rw;
@@ -155,4 +151,5 @@ CREATE OR REPLACE FUNCTION init_schema (TEXT) RETURNS TEXT AS $$
     RETURN sch_name;
   END;
 $$ LANGUAGE 'plpgsql';
+
 
