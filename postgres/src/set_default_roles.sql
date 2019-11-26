@@ -152,4 +152,4 @@ CREATE OR REPLACE FUNCTION init_schema (TEXT) RETURNS TEXT AS $$
   END;
 $$ LANGUAGE 'plpgsql';
 
-
+SELECT init_schema('public');

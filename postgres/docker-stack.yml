@@ -1,7 +1,7 @@
-version: '3.6'
+version: '3.7'
 services:
   postgres:
-    command: postgres -c ssl=on -c ssl_cert_file=/ssl/postgres.cert -c ssl_key_file=/ssl/postgres.key -c config_file=/var/lib/postgresql/data/postgresql.conf
+    command: postgres -c ssl=on -c ssl_cert_file=/ssl/postgres.cert -c ssl_key_file=/ssl/postgres.key 
     environment:
       - POSTGRES_PASSWORD=${POSTGRES__MAIN__PASSWORD:?POSTGRES__MAIN__PASSWORD}
       - POSTGRES_USER=${POSTGRES__MAIN__USER:?POSTGRES__MAIN__USER}
@@ -12,7 +12,6 @@ services:
       - 5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - postgres-config:/var/lib/postgresql/data/postgresql.conf
 
 networks:
   postgres_public_network:
@@ -20,4 +19,3 @@ networks:
 
 volumes:
   postgres-data:
-  postgres-config:
