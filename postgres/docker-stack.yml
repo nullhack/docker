@@ -3,19 +3,22 @@ services:
   postgres:
     command: postgres -c ssl=on -c ssl_cert_file=/ssl/postgres.cert -c ssl_key_file=/ssl/postgres.key 
     environment:
+      - POSTGRES_DB=${POSTGRES__MAIN__DB:?POSTGRES__MAIN__DB}
+      - POSTGRES_HOST=${POSTGRES__MAIN__HOST:?POSTGRES__MAIN__HOST}
       - POSTGRES_PASSWORD=${POSTGRES__MAIN__PASSWORD:?POSTGRES__MAIN__PASSWORD}
+      - POSTGRES_PORT=${POSTGRES__MAIN__PORT:?POSTGRES__MAIN__PORT}
       - POSTGRES_USER=${POSTGRES__MAIN__USER:?POSTGRES__MAIN__USER}
     image: postgres:local
     networks:
       - postgres_public_network
     ports:
-      - 5432
+      - 54321:5432
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
 
 networks:
   postgres_public_network:
     external: true
 
 volumes:
-  postgres-data:
+  pgdata:

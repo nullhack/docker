@@ -15,25 +15,22 @@ services:
         - traefik.frontend.auth.basic.users=${PGADMIN__TRAEFIK__AUTH:?PGADMIN__TRAEFIK__AUTH}
         - traefik.webservice.frontend.entryPoints=https
     environment:
-       - PGADMIN_DEFAULT_EMAIL=${PGADMIN__MAIN__USER:?PGADMIN__MAIN__USER}
-       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN__MAIN__PASSWORD:?PGADMIN__MAIN__PASSWORD}
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN__MAIN__USER:?PGADMIN__MAIN__USER}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN__MAIN__PASSWORD:?PGADMIN__MAIN__PASSWORD}
     image: dpage/pgadmin4:4.15
     networks:
       - public_network
       - pgadmin_public_network
-      - postgres_public_network
     ports:
-       - 80
+      - 8090:80
     volumes:
-       - data:/var/lib/pgadmin
-       - config:/pgadmin4
+      - data:/var/lib/pgadmin
+      - config:/pgadmin4
 
 networks:
   public_network:
     external: true
   pgadmin_public_network:
-    external: true
-  postgres_public_network:
     external: true
 
 volumes:
