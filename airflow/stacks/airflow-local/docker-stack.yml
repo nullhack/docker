@@ -12,6 +12,8 @@ services:
     image: postgres:11
     networks:
       - airflow_public_network
+    ports:
+      - 54322:5432
     volumes:
       - airflow_pgdata:/var/lib/postgresql/data
 
