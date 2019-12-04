@@ -1,4 +1,4 @@
-version: '3.6'
+version: '3.7'
 services:
   pgadmin:
     deploy:
@@ -22,7 +22,7 @@ services:
       - public_network
       - pgadmin_public_network
     ports:
-      - 8090:80
+      - 8082:80
     volumes:
       - data:/var/lib/pgadmin
       - config:/pgadmin4

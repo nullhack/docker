@@ -1,4 +1,4 @@
-version: '3.6'
+version: '3.7'
 
 services:
   postgres:
@@ -123,7 +123,7 @@ services:
       - airflow_public_network
       - public_network
     ports:
-      - 8080
+      - 8081:8080
     volumes:
       - ../../dags:/dags
       - conf:/airflow

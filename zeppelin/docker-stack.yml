@@ -1,4 +1,4 @@
-version: '3.6'
+version: '3.7'
 services:
   zeppelin:
     build: ./src
@@ -24,7 +24,7 @@ services:
       - public_network
       - zeppelin_public_network
     ports:
-      - 8080
+      - 8083:8080
     volumes:
       - ./notebook:/zeppelin/notebook
       - helium:/zeppelin/local-repo

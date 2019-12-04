@@ -1,4 +1,4 @@
-version: '3.6'
+version: '3.7'
 
 services:
   redis:
@@ -7,7 +7,7 @@ services:
     networks:
       - redis_public_network
     ports:
-      - ${REDIS__MAIN__PORT:?REDIS__MAIN__PORT}
+      - 6379
 
 networks:
   redis_public_network:
