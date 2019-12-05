@@ -26,7 +26,7 @@ services:
         constraints:
           - node.role == manager
       replicas: 1
-    image: portainer/portainer:1.22.2
+    image: portainer/portainer:1.23.0
     networks:
       - portainer_public_network
     ports:
