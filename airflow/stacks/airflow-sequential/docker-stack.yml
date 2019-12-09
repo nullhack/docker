@@ -46,8 +46,8 @@ services:
     ports:
       - 8081:8080
     volumes:
-      - ../../dags:/dags
-      - conf:/airflow
+      - airflow_dags:/dags
+      - airflow_conf:/airflow
 
 networks:
   airflow_public_network:
@@ -56,4 +56,10 @@ networks:
     external: true
 
 volumes:
-  conf:
+  airflow_conf:
+    name: airflow_conf
+    external: false
+  airflow_dags:
+    name: airflow_dags
+    external: true
+
