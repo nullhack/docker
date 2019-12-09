@@ -13,6 +13,7 @@ then
   python3 "${SCRIPTS}/airflow_change_config.py"
   airflow upgradedb
   python3 "${SCRIPTS}/airflow_add_user.py"
+  python3 "${SCRIPTS}/airflow_add_connection.py"
 fi
 
 if [ "$1" = "run" ]
