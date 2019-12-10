@@ -36,6 +36,7 @@ RUN set -ex \
 COPY ./airflow_change_config.py ${SCRIPTS}/airflow_change_config.py
 COPY ./airflow_add_user.py ${SCRIPTS}/airflow_add_user.py
 COPY ./airflow_add_connection.py ${SCRIPTS}/airflow_add_connection.py
+COPY ./airflow_add_variable.py ${SCRIPTS}/airflow_add_variable.py
 COPY ./entrypoint.sh ${SCRIPTS}/entrypoint.sh
 
 WORKDIR ${SCRIPTS}

@@ -14,6 +14,7 @@ then
   airflow upgradedb
   python3 "${SCRIPTS}/airflow_add_user.py"
   python3 "${SCRIPTS}/airflow_add_connection.py"
+  python3 "${SCRIPTS}/airflow_add_variable.py"
 fi
 
 if [ "$1" = "run" ]
