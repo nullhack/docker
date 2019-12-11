@@ -1,33 +1,33 @@
 #!/usr/bin/python3
 
 import os
+import subprocess
+import json
+import re
 
-airflow_user = os.environ.get('AIRFLOW_USER')
-airflow_password = os.environ.get('AIRFLOW_PASSWORD')
-airflow_email = os.environ.get('AIRFLOW_EMAIL')
+prefix = 'AIRFLOW_USER_'
 
-if airflow_user and airflow_password:
-    import airflow
-    from airflow import models, settings
-    from airflow.contrib.auth.backends.password_auth import PasswordUser
-
-    session = settings.Session()
-
-    q = session.query(PasswordUser).filter_by(username=airflow_user)
-    
-    if q.count():
-        user = q.one()
-        user.username = airflow_user
-        user.password = airflow_password
-        user.email = airflow_email
-    else:
-        user = PasswordUser(models.User())
-        user.username = airflow_user
-        user.password = airflow_password
-        user.email = airflow_email
-        user.superuser = True
-        session.add(user)
-
-    session.commit()
-    session.close()
+for k in os.environ.keys():
+    if k.startswith(prefix):
+        v = os.environ[k]
+        v = v.replace('{', '{"')
+        v = v.replace('}', '"}')
+        v = v.replace(':', '":"')
+        v = v.replace(',', '","')
+        v = v.replace(' ', '')
+        v = v.replace("'", '"')
+        v = re.sub('["]+', '"', v)
+        params = json.loads(v)
+        role = params.get('role', 'Admin')
+        username = params.get('username', 'admin')
+        password = params['password']
+        email = params.get('email', f'{username}@local')
+        firstname = params.get('firstname', f'{username}')
+        lastname = params.get('lastname', '.')
+        cmd = f'airflow delete_user --username {username}'
+        p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+        p.communicate()
+        cmd = f'airflow create_user --role {role} --username {username} --password {password} --email {email} --firstname {firstname} --lastname {lastname}'
+        p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+        p.communicate()
 
