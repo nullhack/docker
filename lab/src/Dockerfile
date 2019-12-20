@@ -19,11 +19,8 @@ RUN \
 RUN \
   jupyter labextension install @jupyterlab/git &&\
   pip3 install --upgrade jupyterlab-git &&\
-  jupyter labextension install @lckr/jupyterlab_variableinspector &&\
   jupyter serverextension enable --sys-prefix --py jupyterlab_git &&\
-  jupyter labextension install @jupyterlab/github &&\
-  jupyter labextension install jupyterlab-drawio &&\
-  jupyter labextension install @krassowski/jupyterlab_go_to_definition
+  jupyter labextension install @jupyterlab/github
 RUN \
   apt-get install git -y &&\
   git clone https://github.com/agoose77/jupyterlab-markup.git &&\
