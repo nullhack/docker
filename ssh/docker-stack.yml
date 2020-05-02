@@ -2,7 +2,6 @@ version: '3.7'
 
 services:
   ssh:
-    build: ./src
     environment:
       - PASSWORD=${SSH__MAIN__PASSWORD:?SSH__MAIN__PASSWORD}
       - ROOT_PASSWORD=${SSH__MAIN__ROOT_PASSWORD:?SSH__MAIN__ROOT_PASSWORD}
@@ -10,8 +9,7 @@ services:
     networks:
       - ssh_public_network
     ports:
-      - 22
-    restart: unless-stopped
+      - 2222:22
 
 networks:
   ssh_public_network:
