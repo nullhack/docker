@@ -2,7 +2,7 @@
 # DESCRIPTION: Airflow all in one container
 # BUILD: docker build -t airflow:local .
 
-FROM ubuntu:19.10
+FROM ubuntu:20.04
 
 ARG AIRFLOW_VERSION=1.10.9
 ARG AIRFLOW_GPL_UNIDECODE=yes
