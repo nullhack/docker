@@ -1,7 +1,5 @@
 crypto
 celery
 postgres
-#hive
-#jdbc
-#mysql
+async
 ssh

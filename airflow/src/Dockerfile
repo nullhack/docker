@@ -4,7 +4,7 @@
 
 FROM ubuntu:20.04
 
-ARG AIRFLOW_VERSION=1.10.9
+ARG AIRFLOW_VERSION=1.10.10
 ARG AIRFLOW_GPL_UNIDECODE=yes
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -12,15 +12,10 @@ ENV C_FORCE_ROOT=true
 ENV SCRIPTS=/scripts
 ENV AIRFLOW_HOME=/airflow
 
-COPY ./airflow_requirements.txt ${SCRIPTS}/airflow_requirements.txt
-COPY ./python_requirements.txt ${SCRIPTS}/python_requirements.txt
-
 RUN set -ex \
     && apt-get update -y \
     # installing apt dependencies
     && apt-get install -y curl libpq-dev build-essential python3 python3-pip\
-    # installing python dependencies
-    && pip3 install apache-airflow["$(grep -v '^#' ${SCRIPTS}/airflow_requirements.txt | tr -s "( |\n)" , | head -c -1)"]==${AIRFLOW_VERSION} \    
     # removing unecessary files
     && apt-get clean \
     && rm -vrf \
@@ -30,8 +25,15 @@ RUN set -ex \
         /usr/share/man \
         /usr/share/doc \
         /usr/share/doc-base
+
+COPY ./airflow_requirements.txt ${SCRIPTS}/airflow_requirements.txt
+COPY ./python_requirements.txt ${SCRIPTS}/python_requirements.txt
+
 RUN set -ex \
-    && pip3 install -r "${SCRIPTS}/python_requirements.txt"
+    # installing python dependencies
+    && pip3 install -r "${SCRIPTS}/python_requirements.txt"\
+    # installing airflow dependencies
+    && pip3 install apache-airflow["$(grep -v '^#' ${SCRIPTS}/airflow_requirements.txt | tr -s "( |\n)" , | head -c -1)"]==${AIRFLOW_VERSION}
 
 COPY ./airflow_change_config.py ${SCRIPTS}/airflow_change_config.py
 COPY ./airflow_add_user.py ${SCRIPTS}/airflow_add_user.py

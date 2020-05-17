@@ -3,6 +3,14 @@ version: '3.7'
 services:
   postgres:
     command: postgres -c ssl=on -c ssl_cert_file=/ssl/postgres.cert -c ssl_key_file=/ssl/postgres.key
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.1'
+          memory: 50M
     environment:
       - PGDATA=/var/lib/postgresql/data
       - POSTGRES_DB=${POSTGRES__AIRFLOW__DB:?POSTGRES__AIRFLOW__DB}
@@ -39,6 +47,13 @@ services:
           - node.role == manager
         preferences:
           - spread: node.id
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.1'
+          memory: 100M
       replicas: 1
     entrypoint: ./entrypoint.sh run
     environment:

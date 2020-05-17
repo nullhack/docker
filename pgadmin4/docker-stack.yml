@@ -17,12 +17,12 @@ services:
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN__MAIN__USER:?PGADMIN__MAIN__USER}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN__MAIN__PASSWORD:?PGADMIN__MAIN__PASSWORD}
-    image: dpage/pgadmin4:4.15
+    image: dpage/pgadmin4:4.21
     networks:
       - public_network
       - pgadmin_public_network
-    ports:
-      - 8082:80
+    #ports:
+    #  - 8082:80
     volumes:
       - data:/var/lib/pgadmin
       - config:/pgadmin4
