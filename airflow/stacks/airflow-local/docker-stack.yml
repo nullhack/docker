@@ -1,5 +1,9 @@
 version: '3.7'
 
+secrets:
+  ssh_github_dags:
+    external: true
+
 services:
   postgres:
     command: postgres -c ssl=on -c ssl_cert_file=/ssl/postgres.cert -c ssl_key_file=/ssl/postgres.key
@@ -62,6 +66,7 @@ services:
       - AIRFLOW__CORE__FERNET_KEY=${AIRFLOW__MAIN__FERNET_KEY:?AIRFLOW__MAIN__FERNET_KEY}
       - AIRFLOW__CORE__LOAD_EXAMPLES=false
       - AIRFLOW__CORE__SQL_ALCHEMY_CONN=${AIRFLOW__URI__POSTGRESQL_PSYCOPG2:?AIRFLOW__URI__POSTGRESQL_PSYCOPG2}
+      - AIRFLOW_DAGS_DEFAULT=/default_dags
       - AIRFLOW__WEBSERVER__BASE_URL=http://0.0.0.0:8080
       - AIRFLOW__WEBSERVER__WEB_SERVER_PORT=8080
       # login configuration
@@ -78,9 +83,13 @@ services:
     networks:
       - airflow_public_network
       - public_network
+    secrets:
+      - source: ssh_github_dags
+        mode: 0400
     volumes:
       - airflow_dags:/dags
       - airflow_conf:/airflow
+      - out:/out
 
 networks:
   airflow_public_network:
@@ -98,3 +107,7 @@ volumes:
   airflow_dags:
     name: airflow_dags
     external: true
+  out:
+    name: out
+    external: true
+

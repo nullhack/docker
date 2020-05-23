@@ -15,7 +15,7 @@ ENV AIRFLOW_HOME=/airflow
 RUN set -ex \
     && apt-get update -y \
     # installing apt dependencies
-    && apt-get install -y curl libpq-dev build-essential python3 python3-pip\
+    && apt-get install -y curl libpq-dev build-essential python3 python3-pip git openssh-client\
     # removing unecessary files
     && apt-get clean \
     && rm -vrf \
@@ -35,10 +35,12 @@ RUN set -ex \
     # installing airflow dependencies
     && pip3 install apache-airflow["$(grep -v '^#' ${SCRIPTS}/airflow_requirements.txt | tr -s "( |\n)" , | head -c -1)"]==${AIRFLOW_VERSION}
 
-COPY ./airflow_change_config.py ${SCRIPTS}/airflow_change_config.py
-COPY ./airflow_add_user.py ${SCRIPTS}/airflow_add_user.py
 COPY ./airflow_add_connection.py ${SCRIPTS}/airflow_add_connection.py
+COPY ./airflow_add_dags_folder.py ${SCRIPTS}/airflow_add_dags_folder.py
+COPY ./airflow_add_user.py ${SCRIPTS}/airflow_add_user.py
 COPY ./airflow_add_variable.py ${SCRIPTS}/airflow_add_variable.py
+COPY ./airflow_change_config.py ${SCRIPTS}/airflow_change_config.py
+COPY ./dags /default_dags
 COPY ./entrypoint.sh ${SCRIPTS}/entrypoint.sh
 
 WORKDIR ${SCRIPTS}
