@@ -15,7 +15,7 @@ then
   python3 "${SCRIPTS}/airflow_add_user.py"
   python3 "${SCRIPTS}/airflow_add_connection.py"
   python3 "${SCRIPTS}/airflow_add_variable.py"
-  python3 "${SCRIPTS}/airflow_add_dags_folder.py"
+  cp -r "/default_dags" "$AIRFLOW__CORE__DAGS_FOLDER/default_dags"
 fi
 
 if [ "$1" = "run" ]

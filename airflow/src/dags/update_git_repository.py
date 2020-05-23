@@ -11,13 +11,13 @@ mkdir -p "$DAGS_PATH"
 cd "$DAGS_PATH"
 
 if [ -d "$DAGS_PATH/.git" ]; then
-  rm -rf "$DAGS_PATH/.git"
+  GIT_SSH_COMMAND='ssh -o StrictHostKeyChecking=no -i /run/secrets/ssh_github_dags' git pull
+else
+  git init
+  GIT_SSH_COMMAND='ssh -o StrictHostKeyChecking=no -i /run/secrets/ssh_github_dags' git remote add -f origin $GIT_URL
+  git checkout master
+  git merge origin/master --allow-unrelated-histories
 fi
-
-git init
-GIT_SSH_COMMAND='ssh -o StrictHostKeyChecking=no -i /run/secrets/ssh_github_dags' git remote add -f origin $GIT_URL
-git checkout master
-git merge origin/master --allow-unrelated-histories
 
 """
 

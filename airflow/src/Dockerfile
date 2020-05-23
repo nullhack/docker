@@ -36,7 +36,6 @@ RUN set -ex \
     && pip3 install apache-airflow["$(grep -v '^#' ${SCRIPTS}/airflow_requirements.txt | tr -s "( |\n)" , | head -c -1)"]==${AIRFLOW_VERSION}
 
 COPY ./airflow_add_connection.py ${SCRIPTS}/airflow_add_connection.py
-COPY ./airflow_add_dags_folder.py ${SCRIPTS}/airflow_add_dags_folder.py
 COPY ./airflow_add_user.py ${SCRIPTS}/airflow_add_user.py
 COPY ./airflow_add_variable.py ${SCRIPTS}/airflow_add_variable.py
 COPY ./airflow_change_config.py ${SCRIPTS}/airflow_change_config.py
