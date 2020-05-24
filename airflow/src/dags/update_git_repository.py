@@ -27,7 +27,7 @@ with DAG(
     schedule_interval='@once',
     tags=['github', 'dags'],
 ) as parent_dag:
-    task = BashOperator(task_id="parent_task",
+    task = BashOperator(task_id="git_pull",
                         bash_command=bash_cmd,
                         env={})
 
