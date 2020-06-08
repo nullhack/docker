@@ -24,10 +24,8 @@ fi
 with DAG(
     dag_id="update_git_repository",
     start_date=days_ago(0),
-    schedule_interval='@once',
+    schedule_interval='@daily',
     tags=['github', 'dags'],
 ) as parent_dag:
-    task = BashOperator(task_id="git_pull",
-                        bash_command=bash_cmd,
-                        env={})
+    task = BashOperator(task_id="git_pull", bash_command=bash_cmd)
 
