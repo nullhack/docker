@@ -90,6 +90,7 @@ services:
       - airflow_dags:/dags
       - airflow_conf:/airflow
       - out:/out
+      - /var/run/docker.sock:/var/run/docker.sock
 
 networks:
   airflow_public_network:

@@ -31,9 +31,9 @@ COPY ./python_requirements.txt ${SCRIPTS}/python_requirements.txt
 
 RUN set -ex \
     # installing python dependencies
-    && pip3 install -r "${SCRIPTS}/python_requirements.txt"\
+    && pip3 install -U -r "${SCRIPTS}/python_requirements.txt"\
     # installing airflow dependencies
-    && pip3 install apache-airflow["$(grep -v '^#' ${SCRIPTS}/airflow_requirements.txt | tr -s "( |\n)" , | head -c -1)"]==${AIRFLOW_VERSION}
+    && pip3 install -U apache-airflow["$(grep -v '^#' ${SCRIPTS}/airflow_requirements.txt | tr -s "( |\n)" , | head -c -1)"]==${AIRFLOW_VERSION}
 
 COPY ./airflow_add_connection.py ${SCRIPTS}/airflow_add_connection.py
 COPY ./airflow_add_user.py ${SCRIPTS}/airflow_add_user.py
