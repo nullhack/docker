@@ -15,7 +15,7 @@ ENV AIRFLOW_HOME=/airflow
 RUN set -ex \
     && apt-get update -y \
     # installing apt dependencies
-    && apt-get install -y curl libpq-dev build-essential python3 python3-pip git openssh-client\
+    && apt-get install -y curl libpq-dev build-essential python3 python3-pip python3-venv git openssh-client\
     # removing unecessary files
     && apt-get clean \
     && rm -vrf \
