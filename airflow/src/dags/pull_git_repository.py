@@ -8,12 +8,12 @@ mkdir -p "$DAGS_PATH"
 cd "$DAGS_PATH"
 
 if [ -d "$DAGS_PATH/.git" ]; then
-  GIT_SSH_COMMAND='ssh -o StrictHostKeyChecking=no -i \
-          /run/secrets/ssh_github_dags' git pull
+  GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i \
+          ${SSH_PATH}" git pull
 else
   git init
-  GIT_SSH_COMMAND='ssh -o StrictHostKeyChecking=no -i \
-          /run/secrets/ssh_github_dags' git remote add -f origin $GIT_URL
+  GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i \
+          ${SSH_PATH}" git remote add -f origin $GIT_URL
   git checkout master
   git merge origin/master --allow-unrelated-histories
 fi
@@ -22,12 +22,16 @@ fi
 
 with DAG(
     dag_id="pull_git_repository",
-    start_date=days_ago(0),
+    start_date=days_ago(1),
     schedule_interval="@daily",
     tags=["github", "dags"],
 ) as parent_dag:
     task = BashOperator(
         task_id="git_pull",
         bash_command=bash_cmd,
-        env={"DAGS_PATH": "{{var.value.git_path}}", "GIT_URL": "{{var.value.git_url}}"},
+        env={
+            "DAGS_PATH": "{{var.value.git_path}}",
+            "GIT_URL": "{{var.value.git_url}}",
+            "SSH_PATH": "/run/secrets/ssh_github_dags",
+        },
     )
