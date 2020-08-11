@@ -4,7 +4,7 @@
 
 FROM ubuntu:20.04
 
-ARG AIRFLOW_VERSION=1.10.10
+ARG AIRFLOW_VERSION=1.10.11
 ARG AIRFLOW_GPL_UNIDECODE=yes
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -39,7 +39,6 @@ COPY ./airflow_add_connection.py ${SCRIPTS}/airflow_add_connection.py
 COPY ./airflow_add_user.py ${SCRIPTS}/airflow_add_user.py
 COPY ./airflow_add_variable.py ${SCRIPTS}/airflow_add_variable.py
 COPY ./airflow_change_config.py ${SCRIPTS}/airflow_change_config.py
-COPY ./dags /default_dags
 COPY ./entrypoint.sh ${SCRIPTS}/entrypoint.sh
 
 WORKDIR ${SCRIPTS}
