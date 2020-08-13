@@ -37,7 +37,7 @@ services:
       labels:
         - traefik.docker.network=public_network
         - traefik.enable=true
-        - traefik.frontend.rule=Host:${AIRFLOW__TRAEFIK__URL:?AIRFLOW__TRAEFIK__URL}
+        - traefik.frontend.rule=PathPrefixStrip:/
         - traefik.port=8080
         - traefik.tags=public
         # Traefik service that listens to HTTP
@@ -67,7 +67,7 @@ services:
       - AIRFLOW__CORE__LOAD_EXAMPLES=false
       - AIRFLOW__CORE__SQL_ALCHEMY_CONN=${AIRFLOW__URI__POSTGRESQL_PSYCOPG2:?AIRFLOW__URI__POSTGRESQL_PSYCOPG2}
       - AIRFLOW_VAR_GIT_PATH=/dags
-      - AIRFLOW__WEBSERVER__BASE_URL=http://0.0.0.0:8080
+      #- AIRFLOW__WEBSERVER__BASE_URL=/airflow
       - AIRFLOW__WEBSERVER__WEB_SERVER_PORT=8080
       # login configuration
       - AIRFLOW_USER_ADMIN=${AIRFLOW__MAIN__JSON_USER:?AIRFLOW__MAIN__JSON_USER}
