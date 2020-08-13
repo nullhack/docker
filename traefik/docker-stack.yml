@@ -24,7 +24,7 @@ services:
       labels:
         - traefik.docker.network=public_network
         - traefik.enable=true
-        - traefik.frontend.rule=Host:${TRAEFIK__TRAEFIK__URL:?TRAEFIK__TRAEFIK__URL}
+        - traefik.frontend.rule=PathPrefixStrip:/traefik
         - traefik.port=8080
         - traefik.tags=public
         # Traefik service that listens to HTTP
