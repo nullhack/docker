@@ -1,0 +1,18 @@
+#!/bin/bash
+
+BASE_PATH=`dirname $(realpath $0)`
+POSTGRES_SRC="${BASE_PATH}/../postgres/src"
+AIRFLOW_SRC="${BASE_PATH}/../airflow/src"
+AIRFLOW_LOCAL="${BASE_PATH}/../airflow/stacks/airflow-local"
+
+cd $POSTGRES_SRC
+sudo docker build -t postgres:local .
+cd $AIRFLOW_SRC
+sudo docker build -t airflow:local .
+echo 'start'
+cd $BASE_PATH
+sudo ./create_env "$AIRFLOW_LOCAL/env.template" -e > "$AIRFLOW_LOCAL/.envx2"
+echo 'end'
+cd $AIRFLOW_LOCAL
+sudo env -i bash -c "source .envx && docker stack deploy -c docker-stack.yml airflow"
+echo $(pwd)
