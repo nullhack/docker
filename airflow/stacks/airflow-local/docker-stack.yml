@@ -44,7 +44,7 @@ services:
         - traefik.redirectorservice.frontend.entryPoints=http
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
         # Traefik service that listens to HTTPS
-        - traefik.frontend.auth.basic.users=${AIRFLOW__TRAEFIK__AUTH:?AIRFLOW__TRAEFIK__AUTH}
+        #- traefik.frontend.auth.basic.users=${AIRFLOW__TRAEFIK__AUTH:?AIRFLOW__TRAEFIK__AUTH}
         - traefik.webservice.frontend.entryPoints=https
       placement:
         constraints:
