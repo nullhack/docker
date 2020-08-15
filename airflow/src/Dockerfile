@@ -29,6 +29,10 @@ RUN set -ex \
 COPY ./airflow_requirements.txt ${SCRIPTS}/airflow_requirements.txt
 COPY ./python_requirements.txt ${SCRIPTS}/python_requirements.txt
 
+RUN pip3 install -U poetry\
+    && poetry config virtualenvs.in-project true \
+    && poetry config virtualenvs.create true
+
 RUN set -ex \
     # installing python dependencies
     && pip3 install -U -r "${SCRIPTS}/python_requirements.txt"\
