@@ -2,4 +2,3 @@ psycopg2-binary
 redis>=3,<4
 flask_bcrypt
 typing_extensions
-poetry
