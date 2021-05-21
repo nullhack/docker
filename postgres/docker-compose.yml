@@ -1,0 +1,30 @@
+version: "3.3"
+
+services:
+
+  postgres:
+    image: bitnami/postgresql:13
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.postgres.entrypoints=postgres"
+      - "traefik.tcp.routers.postgres.rule=HostSNI(`*`)"
+      - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"
+    environment:
+      POSTGRESQL_PASSWORD: "${POSTGRES_ADMIN_PASSWORD}"
+      POSTGRESQL_USERNAME: "${POSTGRES_ADMIN_USER}"
+      POSTGRESQL_DATABASE: "${POSTGRES_ADMIN_DB}"
+      POSTGRESQL_ENABLE_TLS: "yes"
+      POSTGRESQL_TLS_CERT_FILE: "${POSTGRES_ADMIN_TLS_CERT_FILE}"
+      POSTGRESQL_TLS_KEY_FILE: "${POSTGRES_ADMIN_TLS_KEY_FILE}"
+    volumes:
+      - "ca-cert:/ssl"
+    networks:
+      - "traefik-public"
+
+volumes:
+  ca-cert:
+    external: true
+networks:
+  traefik-public:
+    external: true
+      

@@ -1,5 +1,0 @@
-crypto
-celery
-postgres
-async
-ssh

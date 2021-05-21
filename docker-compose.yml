@@ -1,0 +1,102 @@
+version: "3.3"
+
+services:
+
+  traefik:
+    image: "traefik:v2.4"
+    container_name: "traefik"
+    command:
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=traefik-public"
+      # Configure entrypoint
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # SSL configuration
+      - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.letsencryptresolver.acme.email=user@domaine.com"
+      - "--certificatesresolvers.letsencryptresolver.acme.storage=/letsencrypt/acme.json"
+      # Global HTTP -> HTTPS
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      # TLS entrypoints
+      - "--entrypoints.redis.address=:6379"
+      - "--entrypoints.master.address=:5432"
+      # Enable dashboard
+      - "--api.dashboard=true"
+    ports:
+      - "16379:6379"
+      - "15432:5432"
+      - "443:443"
+      - "80:80"
+    volumes:
+      - traefik-certificates:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.middlewares=traefik-auth"
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=user:$$2y$$05$$taLTf9rn9i7ceUFaEF.4auEfZ2ZYheful9130SkArRc6W7qVLGXVa"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.tls.certresolver=letsencryptresolver"
+      - "traefik.http.routers.traefik.service=api@internal"
+
+  whoami:
+    image: "traefik/whoami"
+    container_name: "simple-service"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.middlewares=whoami-auth"
+      # echo $(htpasswd -nB user) | sed -e s/\\$/\\$\\$/g
+      - "traefik.http.middlewares.whoami-auth.basicauth.users=user:$$2y$$05$$taLTf9rn9i7ceUFaEF.4auEfZ2ZYheful9130SkArRc6W7qVLGXVa"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.http.routers.whoami.tls.certresolver=letsencryptresolver"
+    networks:
+      - traefik-public
+
+  redis:
+    image: redis:4-alpine
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.redis.entrypoints=redis"
+      - "traefik.tcp.routers.redis.rule=HostSNI(`*`)"
+      - "traefik.tcp.services.redis.loadbalancer.server.port=6379"
+    networks:
+      - traefik-public
+
+  redis2:
+    image: redis:4-alpine
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.redis.entrypoints=redis"
+      - "traefik.tcp.routers.redis.rule=HostSNI(`*`)"
+      - "traefik.tcp.services.redis.loadbalancer.server.port=6379"
+    networks:
+      - traefik-public
+
+  postgres:
+    image: postgres
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.master.entrypoints=master"
+      - "traefik.tcp.routers.master.rule=HostSNI(`*`)"
+      - "traefik.tcp.services.master.loadbalancer.server.port=5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    networks:
+      - traefik-public
+
+volumes:
+  traefik-certificates:
+networks:
+  traefik-public:
+    external: true
+      
