@@ -11,9 +11,21 @@ services:
       - "traefik.tcp.services.redis.loadbalancer.server.port=6379"
     environment:
       - "REDIS_PASSWORD=${REDIS_ADMIN_PASSWORD}"
+      - "REDIS_TLS_ENABLED=yes"
+      - "REDIS_TLS_PORT=6378"
+      - "REDIS_TLS_CERT_FILE=/tls/redis.crt"
+      - "REDIS_TLS_KEY_FILE=/tls/redis.key"
+      - "REDIS_TLS_CA_FILE=/tls/ca.crt"
+      - "REDIS_TLS_AUTH_CLIENTS=no"
+    ports:
+      - "16370:6378"
     networks:
       - "traefik-public"
-
+    volumes:
+      - "certs:/tls"
+volumes:
+  certs:
+    external: true
 networks:
   traefik-public:
     external: true

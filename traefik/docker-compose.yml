@@ -23,12 +23,16 @@ services:
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       # TLS entrypoints
       - "--entrypoints.redis.address=:6379"
+      - "--entrypoints.minio.address=:9000"
       - "--entrypoints.postgres.address=:5432"
       # Enable dashboard
       - "--api.dashboard=true"
+      # Pass host Header
+      #- "traefik.frontend.passHostHeader=true"
     ports:
       - "16379:6379"
       - "15432:5432"
+      - "19000:9000"
       - "443:443"
       #- "80:80"
     volumes:

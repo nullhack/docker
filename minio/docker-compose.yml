@@ -1,0 +1,32 @@
+version: "3.3"
+
+services:
+
+   minio:
+    image: "minio/minio:latest"
+    container_name: "minio"
+    command: "server --address ':9000' /data"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.minio.entrypoints=minio"
+      - "traefik.tcp.routers.minio.rule=HostSNI(`*`)"
+      - "traefik.tcp.services.minio.loadbalancer.server.port=9000"
+      #- "traefik.tcp.routers.minio.tls=true"
+      #- "traefik.tcp.routers.minio.tls.passthrough=true"
+    environment:
+      - "MINIO_ACCESS_KEY=user"
+      - "MINIO_SECRET_KEY=password"
+    networks:
+      - "traefik-public"
+    volumes:
+      - "minio-data:/data"
+      - "minio-certs:/root/.minio/certs"
+
+volumes:
+  minio-data:
+  minio-certs:
+    external: true
+networks:
+  traefik-public:
+    external: true
+      
