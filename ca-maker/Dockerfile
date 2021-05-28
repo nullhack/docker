@@ -1,4 +1,4 @@
-FROM alpine/openssl
+FROM alpine/openssl:latest
 
 RUN mkdir /app
 
