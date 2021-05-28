@@ -4,7 +4,7 @@ FROM python:3.7-slim
 # exposing your repository to dagit and dagster-daemon, and to load the DagsterInstance
 
 RUN pip install \
-    dagster \
+    dagster==0.11.10 \
     dagster-postgres \
     dagster-docker
 
@@ -20,7 +20,11 @@ COPY dagster.yaml $DAGSTER_HOME
 
 WORKDIR /opt/dagster/app
 
-COPY repo.py /opt/dagster/app
+COPY dags/ /opt/dagster/app
+
+RUN pip install . && rm -rf /opt/dagster/app/ && mkdir -p /opt/dagster/app/
+
+COPY dags/dags /opt/dagster/app
 
 # Run dagster gRPC server on port 4000
 
@@ -28,4 +32,4 @@ EXPOSE 4000
 
 # CMD allows this to be overridden from run launchers or executors that want
 # to run other commands against your repository
-CMD ["dagster", "api", "grpc", "-h", "0.0.0.0", "-p", "4000", "-f", "repo.py"]
+CMD ["dagster", "api", "grpc", "-h", "0.0.0.0", "-p", "4000", "-m", "dags"]

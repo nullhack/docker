@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  dagster_pipelines:
+    container_name: dagster_pipelines
+    image: localhost:5000/dagsimg:registry
+    environment:
+      DAGSTER_POSTGRES_USER: "postgres_user"
+      DAGSTER_POSTGRES_PASSWORD: "postgres_password"
+      DAGSTER_POSTGRES_DB: "postgres_db"
+      DAGSTER_CURRENT_IMAGE: "localhost:5000/dagsimg:registry"
+    networks:
+      - dagster_network
+
+networks:
+  dagster_network:
+    driver: bridge
+    name: dagster_network
+    external: True

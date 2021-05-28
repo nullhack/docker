@@ -1,0 +1,73 @@
+version: "3.7"
+
+services:
+  dagster_postgresql:
+    image: postgres:11
+    container_name: dagster_postgresql
+    environment:
+      POSTGRES_USER: "postgres_user"
+      POSTGRES_PASSWORD: "postgres_password"
+      POSTGRES_DB: "postgres_db"
+    networks:
+      - dagster_network
+
+  dagster_dagit:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    entrypoint:
+      - dagit
+      - -h
+      - "0.0.0.0"
+      - -p
+      - "3000"
+      - -w
+      - workspace.yaml
+    container_name: dagster_dagit
+    environment:
+      DAGSTER_POSTGRES_USER: "postgres_user"
+      DAGSTER_POSTGRES_PASSWORD: "postgres_password"
+      DAGSTER_POSTGRES_DB: "postgres_db"
+    volumes: # Make docker client accessible so we can terminate containers from dagit
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - dagster_network
+      - traefik-public
+    depends_on:
+      - dagster_postgresql
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dagster.middlewares=dagster-auth"
+      - "traefik.http.middlewares.dagster-auth.basicauth.users=${DAGSTER_DASHBOARD_AUTH}"
+      - "traefik.http.services.dagster.loadbalancer.server.port=3000"
+      - "traefik.http.routers.dagster.rule=Host(`dagster.${HOST:-localhost}`)"
+      - "traefik.http.routers.dagster.entrypoints=websecure"
+      - "traefik.http.routers.dagster.tls.certresolver=letsencryptresolver"
+
+  dagster_daemon:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    entrypoint:
+      - dagster-daemon
+      - run
+    container_name: dagster_daemon
+    restart: on-failure
+    environment:
+      DAGSTER_POSTGRES_USER: "postgres_user"
+      DAGSTER_POSTGRES_PASSWORD: "postgres_password"
+      DAGSTER_POSTGRES_DB: "postgres_db"
+    volumes: # Make docker client accessible so we can launch containers using host docker
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - dagster_network
+    depends_on:
+      - dagster_postgresql
+
+networks:
+  dagster_network:
+    driver: bridge
+    name: dagster_network
+  traefik-public:
+    external: true
+

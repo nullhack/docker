@@ -4,7 +4,7 @@
 FROM python:3.7-slim
 
 RUN pip install \
-    dagster \
+    dagster==0.11.10 \
     dagster-graphql \
     dagit \
     dagster-postgres \
