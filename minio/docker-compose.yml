@@ -6,13 +6,12 @@ services:
     image: "minio/minio:latest"
     container_name: "minio"
     command: "server --address ':9000' /data"
+    restart: "unless-stopped"
     labels:
       - "traefik.enable=true"
       - "traefik.tcp.routers.minio.entrypoints=minio"
       - "traefik.tcp.routers.minio.rule=HostSNI(`*`)"
       - "traefik.tcp.services.minio.loadbalancer.server.port=9000"
-      #- "traefik.tcp.routers.minio.tls=true"
-      #- "traefik.tcp.routers.minio.tls.passthrough=true"
     environment:
       - "MINIO_ACCESS_KEY=user"
       - "MINIO_SECRET_KEY=password"
@@ -24,6 +23,7 @@ services:
 
 volumes:
   minio-data:
+    external: false
   minio-certs:
     external: true
 networks:
