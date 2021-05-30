@@ -3,28 +3,29 @@ version: "3.3"
 services:
 
   redis:
-    image: bitnami/redis:6.2
+    image: "bitnami/redis:6.2"
+    container_name: "redis"
     labels:
       - "traefik.enable=true"
       - "traefik.tcp.routers.redis.entrypoints=redis"
       - "traefik.tcp.routers.redis.rule=HostSNI(`*`)"
       - "traefik.tcp.services.redis.loadbalancer.server.port=6379"
+    restart: "unless-stopped"
     environment:
-      - "REDIS_PASSWORD=${REDIS_ADMIN_PASSWORD}"
+      - "REDIS_PASSWORD=${REDIS_PASSWORD_ADMIN}"
       - "REDIS_TLS_ENABLED=yes"
-      - "REDIS_TLS_PORT=6378"
-      - "REDIS_TLS_CERT_FILE=/tls/redis.crt"
-      - "REDIS_TLS_KEY_FILE=/tls/redis.key"
-      - "REDIS_TLS_CA_FILE=/tls/ca.crt"
+      - "REDIS_TLS_PORT=6379"
+      - "REDIS_TLS_CERT_FILE=/certs/server/redis.crt"
+      - "REDIS_TLS_KEY_FILE=/certs/server/redis.key"
+      - "REDIS_TLS_CA_FILE=/certs/ca/ca.crt"
       - "REDIS_TLS_AUTH_CLIENTS=no"
-    ports:
-      - "16370:6378"
     networks:
       - "traefik-public"
     volumes:
-      - "certs:/tls"
+      - "redis-certs:/certs"
+
 volumes:
-  certs:
+  redis-certs:
     external: true
 networks:
   traefik-public:

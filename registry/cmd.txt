@@ -1,0 +1,16 @@
+
+# creating a user and save it to auth folder.
+docker run --entrypoint htpasswd registry:2 -Bbn <your_username> <your_password> > auth/htpasswd
+#remove the old repository
+docker rm --force registry
+#run the new container with htpasswd
+docker run -d --restart=always --name registry >
+-v ${path}/certs:/certs >
+-v ${path}/auth:/auth >
+-e "REGISTRY_AUTH=htpasswd" >
+-e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" >
+-e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd >
+-e REGISTRY_HTTP_ADDR=0.0.0.0:443 >
+-e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/your_domain.pem >
+-e REGISTRY_HTTP_TLS_KEY=/certs/your_domain.key >
+-p 443:443 registry:2

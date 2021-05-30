@@ -4,6 +4,7 @@ services:
   dagster_pipelines:
     container_name: dagster_pipelines
     image: localhost:5000/dagsimg:registry
+    restart: "unless-stopped"
     environment:
       DAGSTER_POSTGRES_USER: "postgres_user"
       DAGSTER_POSTGRES_PASSWORD: "postgres_password"

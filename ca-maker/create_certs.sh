@@ -50,15 +50,25 @@ openssl req \
 
 cat > /certs/ca/openssl.cnf <<_END_
 [ server_cert ]
-keyUsage = digitalSignature, keyEncipherment
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 nsCertType = server
+subjectAltName = @alt_names
+
+
 [ client_cert ]
 keyUsage = digitalSignature, keyEncipherment
 nsCertType = client
+subjectAltName = @alt_names
+
+
+[alt_names]
+DNS.1 = $HOST
 _END_
 
-generate_cert server "Server-only" "-extfile /certs/ca/openssl.cnf -extensions server_cert"
-generate_cert client "Client-only" "-extfile /certs/ca/openssl.cnf -extensions client_cert"
+generate_cert server "Server-cert" "-extfile /certs/ca/openssl.cnf -extensions server_cert"
+generate_cert client "Client-cert" "-extfile /certs/ca/openssl.cnf -extensions client_cert"
 generate_cert generic "Generic-cert"
 
 chown -R $OWNER:$OWNER /certs

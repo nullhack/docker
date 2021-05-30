@@ -5,6 +5,7 @@ services:
   traefik:
     image: "traefik:v2.4"
     container_name: "traefik"
+    restart: "unless-stopped"
     command:
       - "--providers.docker.endpoint=unix:///var/run/docker.sock"
       - "--providers.docker=true"
@@ -16,7 +17,7 @@ services:
       # SSL configuration
       - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge=true"
       - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.letsencryptresolver.acme.email=user@domaine.com"
+      - "--certificatesresolvers.letsencryptresolver.acme.email=user@domain.com"
       - "--certificatesresolvers.letsencryptresolver.acme.storage=/letsencrypt/acme.json"
       # Global HTTP -> HTTPS
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
@@ -30,11 +31,10 @@ services:
       # Pass host Header
       #- "traefik.frontend.passHostHeader=true"
     ports:
-      - "16379:6379"
-      - "15432:5432"
-      - "19000:9000"
+      - "6379:6379"
+      - "5432:5432"
+      - "9000:9000"
       - "443:443"
-      #- "80:80"
     volumes:
       - traefik-certificates:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock:ro

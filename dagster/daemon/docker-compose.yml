@@ -4,6 +4,7 @@ services:
   dagster_postgresql:
     image: postgres:11
     container_name: dagster_postgresql
+    restart: "unless-stopped"
     environment:
       POSTGRES_USER: "postgres_user"
       POSTGRES_PASSWORD: "postgres_password"
@@ -24,6 +25,7 @@ services:
       - -w
       - workspace.yaml
     container_name: dagster_dagit
+    restart: "unless-stopped"
     environment:
       DAGSTER_POSTGRES_USER: "postgres_user"
       DAGSTER_POSTGRES_PASSWORD: "postgres_password"
@@ -52,7 +54,7 @@ services:
       - dagster-daemon
       - run
     container_name: dagster_daemon
-    restart: on-failure
+    restart: "on-failure"
     environment:
       DAGSTER_POSTGRES_USER: "postgres_user"
       DAGSTER_POSTGRES_PASSWORD: "postgres_password"
