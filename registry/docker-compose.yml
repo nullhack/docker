@@ -1,0 +1,34 @@
+version: "3.3"
+
+services:
+
+  registry:
+    image: "registry:2.7.0"
+    container_name: "registry"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.registry.middlewares=registry-auth"
+      - "traefik.http.middlewares.registry-auth.basicauth.users=${REGISTRY_DASHBOARD_AUTH}"
+      - "traefik.http.services.registry.loadbalancer.server.port=62443"
+      - "traefik.http.routers.registry.rule=Host(`registry.${HOST:-localhost}`)"
+      - "traefik.http.routers.registry.entrypoints=websecure"
+      - "traefik.http.routers.registry.tls.certresolver=letsencryptresolver"
+    restart: "unless-stopped"
+    environment:
+      - "REGISTRY_HTTP_ADDR=0.0.0.0:62443"
+      #- "REGISTRY_AUTH=htpasswd"
+      #- "REGISTRY_AUTH_HTPASSWD_PATH=/auth/registry.auth"
+      #- "REGISTRY_AUTH_HTPASSWD_REALM=Local Registry"
+    volumes:
+      - "registry-htpasswd:/auth"
+    networks:
+      - "traefik-public"
+
+
+volumes:
+  registry-htpasswd:
+    external: true
+networks:
+  traefik-public:
+    external: true
+      
