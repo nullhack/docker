@@ -10,7 +10,7 @@ services:
       - "--providers.docker.endpoint=unix:///var/run/docker.sock"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.network=traefik-public"
+      - "--providers.docker.network=traefik_network"
       # Configure entrypoint
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
@@ -37,10 +37,10 @@ services:
       - "443:443"
       - "80:80"
     volumes:
-      - traefik-certs:/letsencrypt
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - "traefik-certs:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
-      - traefik-public
+      - traefik_network
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.middlewares=traefik-auth"
@@ -55,6 +55,6 @@ volumes:
   traefik-certs:
     external: false
 networks:
-  traefik-public:
+  traefik_network:
     external: true
  

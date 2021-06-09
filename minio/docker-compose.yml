@@ -16,8 +16,8 @@ services:
       - "MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY_ADMIN}"
       - "MINIO_SECRET_KEY=${MINIO_SECRET_KEY_ADMIN}"
     networks:
-      - "traefik-public"
-      - "minio-network"
+      - "traefik_network"
+      - "minio_network"
     volumes:
       - "minio-data:/data"
       - "minio-certs:/root/.minio/certs"
@@ -28,7 +28,7 @@ volumes:
   minio-certs:
     external: true
 networks:
-  traefik-public:
+  traefik_network:
     external: true
-  minio-network:
+  minio_network:
     external: true

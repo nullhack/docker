@@ -20,8 +20,8 @@ services:
       - "REDIS_TLS_CA_FILE=/certs/ca/ca.crt"
       - "REDIS_TLS_AUTH_CLIENTS=no"
     networks:
-      - "traefik-public"
-      - "redis-network"
+      - "traefik_network"
+      - "redis_network"
     volumes:
       - "redis-certs:/certs"
 
@@ -29,8 +29,8 @@ volumes:
   redis-certs:
     external: true
 networks:
-  traefik-public:
+  traefik_network:
     external: true
-  redis-network:
+  redis_network:
     external: true
       

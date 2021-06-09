@@ -25,7 +25,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
     networks:
       - "dagster_network"
-      - "traefik-public"
+      - "traefik_network"
     depends_on:
       - "dagster_postgresql"
     labels:
@@ -58,6 +58,6 @@ networks:
     driver: "bridge"
     name: "dagster_network"
     external: true
-  traefik-public:
+  traefik_network:
     external: true
 

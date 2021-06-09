@@ -17,10 +17,9 @@ services:
     environment:
       - "REGISTRY_HTTP_ADDR=0.0.0.0:62443"
     networks:
-      - "traefik-public"
-
+      - "traefik_network"
 
 networks:
-  traefik-public:
+  traefik_network:
     external: true
       

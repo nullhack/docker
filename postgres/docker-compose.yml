@@ -18,7 +18,7 @@ services:
     volumes:
       - "postgres-certs:/certs"
     networks:
-      - "postgres-network"
+      - "postgres_network"
 
   pgbouncer:
     image: "bitnami/pgbouncer:latest"
@@ -44,15 +44,15 @@ services:
     volumes:
       - "postgres-certs:/certs"
     networks:
-      - "traefik-public"
-      - "postgres-network"
+      - "traefik_network"
+      - "postgres_network"
 
 volumes:
   postgres-certs:
     external: true
 networks:
-  traefik-public:
+  traefik_network:
     external: true
-  postgres-network:
+  postgres_network:
     external: true
       

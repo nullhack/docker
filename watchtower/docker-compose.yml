@@ -4,9 +4,9 @@ services:
   watchtower:
     image: "containrrr/watchtower:latest"
     container_name: "watchtower"
-    command: "--interval 30 --cleanup"
+    command: "--interval 60 --cleanup"
     restart: "unless-stopped"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "/root/.docker/config.json:/config.json"
+      - "/root/.docker/config.json:/config.json:ro"
 
