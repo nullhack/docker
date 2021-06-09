@@ -1,10 +1,12 @@
-version: "3"
+version: "3.7"
 
 services:
   watchtower:
     image: "containrrr/watchtower:latest"
     container_name: "watchtower"
-    command: "--interval 300 --cleanup"
+    command: "--interval 30 --cleanup"
     restart: "unless-stopped"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/root/.docker/config.json:/config.json"
+

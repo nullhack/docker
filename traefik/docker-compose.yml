@@ -35,8 +35,9 @@ services:
       - "5432:5432"
       - "9000:9000"
       - "443:443"
+      - "80:80"
     volumes:
-      - traefik-certificates:/letsencrypt
+      - traefik-certs:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - traefik-public
@@ -51,7 +52,8 @@ services:
       - "traefik.http.routers.traefik.service=api@internal"
 
 volumes:
-  traefik-certificates:
+  traefik-certs:
+    external: false
 networks:
   traefik-public:
     external: true

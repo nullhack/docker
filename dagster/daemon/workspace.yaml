@@ -3,8 +3,8 @@ load_from:
   - grpc_server:
       host: dagster_pipelines
       port: 4000
-      location_name: "example_pipelines"
+      location_name: "main_repository"
   - grpc_server:
-      host: dagster_pipelines2
-      port: 4001
-      location_name: "example_pipelines2"
+      host: dagster_pipelines_example
+      port: 4000
+      location_name: "EXAMPLE_repository"

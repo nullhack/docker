@@ -1,1 +1,1 @@
-[ -n "$(sudo docker images -q ca:local)" ] || sudo docker build -t ca:local .
+[ -n "$(sudo docker image ls -q -f reference=ca:local)" ] || sudo docker build -t ca:local .

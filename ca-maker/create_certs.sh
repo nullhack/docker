@@ -34,7 +34,6 @@ generate_cert() {
             -out $certfile
 }
 
-mkdir -p /certs
 mkdir -p /certs/ca
 mkdir -p /certs/server
 mkdir -p /certs/client

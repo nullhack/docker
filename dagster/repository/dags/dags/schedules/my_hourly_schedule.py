@@ -4,7 +4,7 @@ from dagster import schedule
 
 
 @schedule(
-    cron_schedule="* * * * *",
+    cron_schedule="*/3 * * * *",
     pipeline_name="another_pipeline",
     #start_date=datetime(2021, 1, 1),
     #execution_timezone="US/Central",

@@ -5,11 +5,6 @@ services:
   postgres:
     image: "bitnami/postgresql:13"
     container_name: "postgres"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.tcp.routers.postgres.entrypoints=postgres"
-      - "traefik.tcp.routers.postgres.rule=HostSNI(`*`)"
-      - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"
     restart: "unless-stopped"
     environment:
       POSTGRESQL_PASSWORD: "${POSTGRES_ADMIN_PASSWORD}"
@@ -18,15 +13,46 @@ services:
       POSTGRESQL_ENABLE_TLS: "yes"
       POSTGRESQL_TLS_CERT_FILE: "/certs/postgres.crt"
       POSTGRESQL_TLS_KEY_FILE: "/certs/postgres.key"
+    expose:
+      - "5432"
+    volumes:
+      - "postgres-certs:/certs"
+    networks:
+      - "postgres-network"
+
+  pgbouncer:
+    image: "bitnami/pgbouncer:latest"
+    container_name: "pgbouncer"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.postgres.entrypoints=postgres"
+      - "traefik.tcp.routers.postgres.rule=HostSNI(`*`)"
+      - "traefik.tcp.services.postgres.loadbalancer.server.port=6432"
+    restart: "unless-stopped"
+    environment:
+      PGBOUNCER_EXTRA_ARGS: "--verbose" 
+      POSTGRESQL_USERNAME: "${POSTGRES_ADMIN_USER}"
+      POSTGRESQL_PASSWORD: "${POSTGRES_ADMIN_PASSWORD}"
+      POSTGRESQL_DATABASE: "${POSTGRES_ADMIN_DB}"
+      POSTGRESQL_HOST: "postgres" 
+      POSTGRESQL_PORT: 5432 
+      PGBOUNCER_PORT: 6432 
+      PGBOUNCER_BIND_ADDRESS: "0.0.0.0"
+      PGBOUNCER_CLIENT_TLS_SSLMODE: "require"
+      PGBOUNCER_CLIENT_TLS_CERT_FILE: "/certs/postgres.crt"
+      PGBOUNCER_CLIENT_TLS_KEY_FILE: "/certs/postgres.key"
     volumes:
       - "postgres-certs:/certs"
     networks:
       - "traefik-public"
+      - "postgres-network"
 
 volumes:
   postgres-certs:
     external: true
 networks:
   traefik-public:
+    external: true
+  postgres-network:
     external: true
       

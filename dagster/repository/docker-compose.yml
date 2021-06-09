@@ -2,19 +2,19 @@ version: "3.7"
 
 services:
   dagster_pipelines:
-    container_name: dagster_pipelines
-    image: localhost:5000/dagsimg:registry
+    container_name: "dagster_pipelines"
+    image: "registry.${HOST:-localhost}/dagster_repo:local"
     restart: "unless-stopped"
     environment:
-      DAGSTER_POSTGRES_USER: "postgres_user"
-      DAGSTER_POSTGRES_PASSWORD: "postgres_password"
-      DAGSTER_POSTGRES_DB: "postgres_db"
-      DAGSTER_CURRENT_IMAGE: "localhost:5000/dagsimg:registry"
+      DAGSTER_POSTGRES_USER: "${POSTGRESQL_ADMIN_USERNAME}"
+      DAGSTER_POSTGRES_PASSWORD: "${POSTGRESQL_ADMIN_PASSWORD}"
+      DAGSTER_POSTGRES_DB: "${POSTGRESQL_ADMIN_DATABASE}"
+      DAGSTER_CURRENT_IMAGE: "registry.${HOST:-localhost}/dagster_repo:local"
     networks:
-      - dagster_network
+      - "dagster_network"
 
 networks:
   dagster_network:
-    driver: bridge
-    name: dagster_network
+    driver: "bridge"
+    name: "dagster_network"
     external: True

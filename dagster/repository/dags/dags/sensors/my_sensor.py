@@ -10,6 +10,4 @@ def my_sensor(_context):
     Sensors:
     https://docs.dagster.io/overview/schedules-sensors/sensors
     """
-    should_run = True
-    if should_run:
-        yield RunRequest(run_key="my_run", run_config={})
+    pass

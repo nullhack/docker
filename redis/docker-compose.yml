@@ -21,6 +21,7 @@ services:
       - "REDIS_TLS_AUTH_CLIENTS=no"
     networks:
       - "traefik-public"
+      - "redis-network"
     volumes:
       - "redis-certs:/certs"
 
@@ -29,5 +30,7 @@ volumes:
     external: true
 networks:
   traefik-public:
+    external: true
+  redis-network:
     external: true
       

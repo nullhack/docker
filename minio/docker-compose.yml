@@ -31,5 +31,4 @@ networks:
   traefik-public:
     external: true
   minio-network:
-    external: false
-      
+    external: true
