@@ -8,7 +8,9 @@ cd -
 
 [ -n "$(sudo docker network ls -q -f name=dagster_network)" ] || sudo docker network create --driver bridge --attachable dagster_network
 
-sudo docker login -u user -p password registry.localhost
+sleep 0.5
+
+sudo docker login --username user --password password registry.localhost
 
 cd daemon
 [ -n "$(sudo docker image ls -q -f reference=registry.localhost/dagster_console:local)" ] || sudo docker build -t "registry.localhost/dagster_console:local" .
