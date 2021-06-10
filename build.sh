@@ -26,3 +26,7 @@ cd dagster
 bash build.sh
 cd -
 
+cd watchtower
+bash build.sh
+cd -
+

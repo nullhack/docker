@@ -19,12 +19,15 @@ sudo docker-compose down -v
 cd ..
 
 cd dagster
-
 cd daemon
 sudo docker-compose down -v
 cd ..
 cd repository
 sudo docker-compose down -v
+cd ..
+cd ..
 
+cd watchtower
+sudo docker-compose down -v
 cd ..
 
