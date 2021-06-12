@@ -3,53 +3,51 @@ version: "3.3"
 services:
 
   traefik:
-    image: "traefik:v2.4"
-    container_name: "traefik"
-    restart: "unless-stopped"
+    image: traefik:v2.4
+    container_name: traefik
+    restart: unless-stopped
     command:
-      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.network=traefik_network"
+      - --providers.docker.endpoint=unix:///var/run/docker.sock
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=traefik_network
       # Configure entrypoint
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
       # SSL configuration
-      - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge=true"
-      - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.letsencryptresolver.acme.email=user@domain.com"
-      - "--certificatesresolvers.letsencryptresolver.acme.storage=/letsencrypt/acme.json"
+      - --certificatesresolvers.letsencryptresolver.acme.httpchallenge=true
+      - --certificatesresolvers.letsencryptresolver.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.letsencryptresolver.acme.email=user@domain.com
+      - --certificatesresolvers.letsencryptresolver.acme.storage=/letsencrypt/acme.json
       # Global HTTP -> HTTPS
-      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
       # TLS entrypoints
-      - "--entrypoints.redis.address=:6379"
-      - "--entrypoints.minio.address=:9000"
-      - "--entrypoints.postgres.address=:5432"
+      - --entrypoints.redis.address=:6379
+      - --entrypoints.minio.address=:9000
+      - --entrypoints.postgres.address=:5432
       # Enable dashboard
-      - "--api.dashboard=true"
-      # Pass host Header
-      #- "traefik.frontend.passHostHeader=true"
+      - --api.dashboard=true
     ports:
-      - "6379:6379"
-      - "5432:5432"
-      - "9000:9000"
-      - "443:443"
-      - "80:80"
+      - 6379:6379
+      - 5432:5432
+      - 9000:9000
+      - 443:443
+      - 80:80
     volumes:
-      - "traefik-certs:/letsencrypt"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - traefik-certs:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - traefik_network
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.traefik.middlewares=traefik-auth"
-      - "traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_DASHBOARD_AUTH}"
-      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.${HOST:-localhost}`)"
-      - "traefik.http.routers.traefik.entrypoints=websecure"
-      - "traefik.http.routers.traefik.tls.certresolver=letsencryptresolver"
-      - "traefik.http.routers.traefik.service=api@internal"
+      - traefik.enable=true
+      - traefik.http.routers.traefik.middlewares=traefik-auth
+      - traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_DASHBOARD_AUTH}
+      - traefik.http.services.traefik.loadbalancer.server.port=8080
+      - traefik.http.routers.traefik.rule=HostRegexp(`{www:(?:www\.)?}{subdomain:traefik[a-z0-9.-_]*}.{domain:(traefik\.me|localhost)}`)
+      - traefik.http.routers.traefik.entrypoints=websecure
+      - traefik.http.routers.traefik.tls.certresolver=letsencryptresolver
+      - traefik.http.routers.traefik.service=api@internal
 
 volumes:
   traefik-certs:

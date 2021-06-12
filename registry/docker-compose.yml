@@ -3,21 +3,21 @@ version: "3.3"
 services:
 
   registry:
-    image: "registry:2.7.0"
-    container_name: "registry"
+    image: registry:2.7.0
+    container_name: registry
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.registry.middlewares=registry-auth"
-      - "traefik.http.middlewares.registry-auth.basicauth.users=${REGISTRY_DASHBOARD_AUTH}"
-      - "traefik.http.services.registry.loadbalancer.server.port=62443"
-      - "traefik.http.routers.registry.rule=Host(`registry.${HOST:-localhost}`)"
-      - "traefik.http.routers.registry.entrypoints=websecure"
-      - "traefik.http.routers.registry.tls.certresolver=letsencryptresolver"
-    restart: "unless-stopped"
+      - traefik.enable=true
+      - traefik.http.routers.registry.middlewares=registry-auth
+      - traefik.http.middlewares.registry-auth.basicauth.users=${REGISTRY_DASHBOARD_AUTH}
+      - traefik.http.services.registry.loadbalancer.server.port=62443
+      - traefik.http.routers.registry.rule=HostRegexp(`{www:(?:www\.)?}{subdomain:registry[a-z0-9.-_]*}.{domain:(traefik\.me|localhost)}`)
+      - traefik.http.routers.registry.entrypoints=websecure
+      - traefik.http.routers.registry.tls.certresolver=letsencryptresolver
+    restart: unless-stopped
     environment:
-      - "REGISTRY_HTTP_ADDR=0.0.0.0:62443"
+      - REGISTRY_HTTP_ADDR=0.0.0.0:62443
     networks:
-      - "traefik_network"
+      - traefik_network
 
 networks:
   traefik_network:

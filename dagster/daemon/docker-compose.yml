@@ -2,61 +2,61 @@ version: "3.7"
 
 services:
   dagster_postgresql:
-    image: "bitnami/postgresql:13"
-    container_name: "dagster_postgresql"
-    restart: "unless-stopped"
+    image: bitnami/postgresql:13
+    container_name: dagster_postgresql
+    restart: unless-stopped
     environment:
-      POSTGRESQL_PASSWORD: "${POSTGRESQL_ADMIN_PASSWORD}"
-      POSTGRESQL_USERNAME: "${POSTGRESQL_ADMIN_USERNAME}"
-      POSTGRESQL_DATABASE: "${POSTGRESQL_ADMIN_DATABASE}"
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_ADMIN_PASSWORD}
+      - POSTGRESQL_USERNAME=${POSTGRESQL_ADMIN_USERNAME}
+      - POSTGRESQL_DATABASE=${POSTGRESQL_ADMIN_DATABASE}
     networks:
-      - "dagster_network"
+      - dagster_network
 
   dagster_dagit:
-    image: "registry.${HOST:-localhost}/dagster_console:local"
+    image: registry.${HOST:-localhost}/dagster_console:local
     entrypoint: ["dagit", "-h", "0.0.0.0", "-p", "3000", "-w", "workspace.yaml"]
-    container_name: "dagster_dagit"
-    restart: "unless-stopped"
+    container_name: dagster_dagit
+    restart: unless-stopped
     environment:
-      DAGSTER_POSTGRES_USER: "${POSTGRESQL_ADMIN_USERNAME}"
-      DAGSTER_POSTGRES_PASSWORD: "${POSTGRESQL_ADMIN_PASSWORD}"
-      DAGSTER_POSTGRES_DB: "${POSTGRESQL_ADMIN_DATABASE}"
+      - DAGSTER_POSTGRES_USER=${POSTGRESQL_ADMIN_USERNAME}
+      - DAGSTER_POSTGRES_PASSWORD=${POSTGRESQL_ADMIN_PASSWORD}
+      - DAGSTER_POSTGRES_DB=${POSTGRESQL_ADMIN_DATABASE}
     volumes: # Make docker client accessible so we can terminate containers from dagit
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - "dagster_network"
-      - "traefik_network"
+      - dagster_network
+      - traefik_network
     depends_on:
-      - "dagster_postgresql"
+      - dagster_postgresql
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.dagster.middlewares=dagster-auth"
-      - "traefik.http.middlewares.dagster-auth.basicauth.users=${DAGSTER_DASHBOARD_AUTH}"
-      - "traefik.http.services.dagster.loadbalancer.server.port=3000"
-      - "traefik.http.routers.dagster.rule=Host(`dagster.${HOST:-localhost}`)"
-      - "traefik.http.routers.dagster.entrypoints=websecure"
-      - "traefik.http.routers.dagster.tls.certresolver=letsencryptresolver"
+      - traefik.enable=true
+      - traefik.http.routers.dagster.middlewares=dagster-auth
+      - traefik.http.middlewares.dagster-auth.basicauth.users=${DAGSTER_DASHBOARD_AUTH}
+      - traefik.http.services.dagster.loadbalancer.server.port=3000
+      - traefik.http.routers.dagster.rule=HostRegexp(`{www:(?:www\.)?}{subdomain:dagster[a-z0-9.-_]*}.{domain:(traefik\.me|localhost)}`)
+      - traefik.http.routers.dagster.entrypoints=websecure
+      - traefik.http.routers.dagster.tls.certresolver=letsencryptresolver
 
   dagster_daemon:
-    image: "registry.${HOST:-localhost}/dagster_console:local"
+    image: registry.${HOST:-localhost}/dagster_console:local
     entrypoint: ["dagster-daemon", "run"]
-    container_name: "dagster_daemon"
-    restart: "on-failure"
+    container_name: dagster_daemon
+    restart: on-failure
     environment:
-      DAGSTER_POSTGRES_USER: "${POSTGRESQL_ADMIN_USERNAME}"
-      DAGSTER_POSTGRES_PASSWORD: "${POSTGRESQL_ADMIN_PASSWORD}"
-      DAGSTER_POSTGRES_DB: "${POSTGRESQL_ADMIN_DATABASE}"
+      - DAGSTER_POSTGRES_USER=${POSTGRESQL_ADMIN_USERNAME}
+      - DAGSTER_POSTGRES_PASSWORD=${POSTGRESQL_ADMIN_PASSWORD}
+      - DAGSTER_POSTGRES_DB=${POSTGRESQL_ADMIN_DATABASE}
     volumes: # Make docker client accessible so we can launch containers using host docker
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - "dagster_network"
+      - dagster_network
     depends_on:
-      - "dagster_postgresql"
+      - dagster_postgresql
 
 networks:
   dagster_network:
-    driver: "bridge"
-    name: "dagster_network"
+    driver: bridge
+    name: dagster_network
     external: true
   traefik_network:
     external: true

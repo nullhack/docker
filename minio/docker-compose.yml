@@ -3,24 +3,24 @@ version: "3.3"
 services:
 
    minio:
-    image: "minio/minio:latest"
-    container_name: "minio"
-    command: "server --address ':9000' /data"
-    restart: "unless-stopped"
+    image: minio/minio:latest
+    container_name: minio
+    command: server --address ':9000' /data
+    restart: unless-stopped
     labels:
-      - "traefik.enable=true"
-      - "traefik.tcp.routers.minio.entrypoints=minio"
-      - "traefik.tcp.routers.minio.rule=HostSNI(`*`)"
-      - "traefik.tcp.services.minio.loadbalancer.server.port=9000"
+      - traefik.enable=true
+      - traefik.tcp.routers.minio.entrypoints=minio
+      - traefik.tcp.routers.minio.rule=HostSNI(`*`)
+      - traefik.tcp.services.minio.loadbalancer.server.port=9000
     environment:
-      - "MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY_ADMIN}"
-      - "MINIO_SECRET_KEY=${MINIO_SECRET_KEY_ADMIN}"
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY_ADMIN}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY_ADMIN}
     networks:
-      - "traefik_network"
-      - "minio_network"
+      - traefik_network
+      - minio_network
     volumes:
-      - "minio-data:/data"
-      - "minio-certs:/root/.minio/certs"
+      - minio-data:/data
+      - minio-certs:/root/.minio/certs
 
 volumes:
   minio-data:
