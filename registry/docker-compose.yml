@@ -10,7 +10,7 @@ services:
       - traefik.http.routers.registry.middlewares=registry-auth
       - traefik.http.middlewares.registry-auth.basicauth.users=${REGISTRY_DASHBOARD_AUTH}
       - traefik.http.services.registry.loadbalancer.server.port=62443
-      - traefik.http.routers.registry.rule=HostRegexp(`{www:(?:www\.)?}{subdomain:registry[a-z0-9.-_]*}.{domain:(traefik\.me|localhost)}`)
+      - traefik.http.routers.traefik.rule=HostRegexp(`{www:(?:www\.)?}registry.{domain:[a-z0-9.-_]+}`)
       - traefik.http.routers.registry.entrypoints=websecure
       - traefik.http.routers.registry.tls.certresolver=letsencryptresolver
     restart: unless-stopped

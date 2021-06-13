@@ -33,7 +33,7 @@ services:
       - traefik.http.routers.dagster.middlewares=dagster-auth
       - traefik.http.middlewares.dagster-auth.basicauth.users=${DAGSTER_DASHBOARD_AUTH}
       - traefik.http.services.dagster.loadbalancer.server.port=3000
-      - traefik.http.routers.dagster.rule=HostRegexp(`{www:(?:www\.)?}{subdomain:dagster[a-z0-9.-_]*}.{domain:(traefik\.me|localhost)}`)
+      - traefik.http.routers.traefik.rule=HostRegexp(`{www:(?:www\.)?}dagster.{domain:[a-z0-9.-_]+}`)
       - traefik.http.routers.dagster.entrypoints=websecure
       - traefik.http.routers.dagster.tls.certresolver=letsencryptresolver
 

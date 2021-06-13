@@ -44,7 +44,7 @@ services:
       - traefik.http.routers.traefik.middlewares=traefik-auth
       - traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_DASHBOARD_AUTH}
       - traefik.http.services.traefik.loadbalancer.server.port=8080
-      - traefik.http.routers.traefik.rule=HostRegexp(`{www:(?:www\.)?}{subdomain:traefik[a-z0-9.-_]*}.{domain:(traefik\.me|localhost)}`)
+      - traefik.http.routers.traefik.rule=HostRegexp(`{www:(?:www\.)?}traefik.{domain:[a-z0-9.-_]+}`)
       - traefik.http.routers.traefik.entrypoints=websecure
       - traefik.http.routers.traefik.tls.certresolver=letsencryptresolver
       - traefik.http.routers.traefik.service=api@internal
