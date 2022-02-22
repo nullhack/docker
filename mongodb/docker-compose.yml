@@ -1,0 +1,37 @@
+version: "3.3"
+
+services:
+
+  mongodb:
+    image: bitnami/mongodb:4.4
+    container_name: mongodb
+    labels:
+      - traefik.enable=true
+      - traefik.tcp.routers.mongodb.entrypoints=mongodb
+      - traefik.tcp.routers.mongodb.rule=HostSNI(`*`)
+      - traefik.tcp.services.mongodb.loadbalancer.server.port=27017
+    restart: unless-stopped
+    environment:
+      - MONGODB_USERNAME=${MONGODB_ADMIN_USER}
+      - MONGODB_PASSWORD=${MONGODB_ADMIN_PASSWORD}
+      - MONGODB_ROOT_PASSWORD=${MONGODB_ADMIN_PASSWORD}
+      - MONGODB_DATABASE=${MONGODB_ADMIN_DB}
+      - MONGODB_EXTRA_FLAGS=--tlsMode=requireTLS --tlsCertificateKeyFile=/certs/mongodb.key --tlsClusterFile=/certs/mongodb.key --tlsCAFile=/certs/mongodb.crt
+    volumes:
+      - mongodb-certs:/certs
+      - mongodb_data:/bitnami/mongodb
+    networks:
+      - traefik_network
+      - mongodb_network
+
+volumes:
+  mongodb-certs:
+    external: true
+  mongodb_data:
+    driver: local
+networks:
+  traefik_network:
+    external: true
+  mongodb_network:
+    external: true
+      

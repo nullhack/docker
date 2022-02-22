@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik:v2.6.1
+    container_name: "${DOCKER_NAME}_traefik"
+    command:
+      - --providers.docker=true
+      # Enable the API handler in insecure mode,
+      # which means that the Traefik API will be available directly
+      # on the entry point named traefik.
+      - --api.insecure=false
+      # Defines the path to the configuration file with the certificates list.
+      - --providers.file.filename=/root/.config/ssl.toml
+      # Define Traefik entry points to port [80] for http and port [443] for https.
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+    networks:
+      # Define the network on which traefik is going to operate.
+      - traefik-public
+    ports:
+      # Open traefik http [80] and https [443] ports.
+      - '80:80'
+      - '443:443'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Mount the configuration file with the certificates list.
+      - ./traefik-ssl.toml:/root/.config/ssl.toml
+      # Mount the folder containing the certificates for https.
+      - ./certs/:/certs/
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik.middlewares=traefik-auth
+      - traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_DASHBOARD_AUTH}
+      - traefik.http.services.traefik.loadbalancer.server.port=8080
+      - traefik.http.routers.traefik.rule=HostRegexp(`{www:(?:www\.)?}traefik.{domain:[a-z0-9.-_]+}`)
+      - traefik.http.routers.traefik.entrypoints=websecure
+      - traefik.http.routers.traefik.tls.certresolver=letsencryptresolver
+      - traefik.http.routers.traefik.service=api@internal
+
+networks:
+  traefik-public:
+    external: true

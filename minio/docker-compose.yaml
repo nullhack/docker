@@ -1,0 +1,71 @@
+version: '3'
+
+services:
+  minio:
+    # Please use fixed versions :D
+    image: minio/minio:RELEASE.2022-02-17T23-22-26Z
+    networks:
+      - traefik-public
+    volumes:
+      - minio-data:/data
+    command:
+      - server
+      - /data
+      - --console-address
+      - ":9001"
+    environment:
+      - "MINIO_ROOT_USER=${MINIO_ROOT_USER_ADMIN}"
+      - "MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD_ADMIN}"
+      # Do NOT use MINIO_DOMAIN or MINIO_SERVER_URL with Traefik.
+      # All Routing is done by Traefik, just tell minio where to redirect to.
+      #- "MINIO_BROWSER_REDIRECT_URL=https://minio-api.${DOCKER_BASE_URL}"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.${DOCKER_NAME}_minio.service=${DOCKER_NAME}_minio"
+      - "traefik.http.routers.${DOCKER_NAME}_minio-http.service=${DOCKER_NAME}_minio"
+      # Enable Whoami handler entrypoint on http.
+      - "traefik.http.routers.${DOCKER_NAME}_minio-http.entrypoints=web"
+      # Define Whoami handler http host.
+      - traefik.http.routers.${DOCKER_NAME}_minio-http.rule=HostRegexp(`{www:(?:www\.)?}minio.{domain:[a-z0-9.-_]+}`)
+      # Define http middleware and redirection to https.
+      - "traefik.http.routers.${DOCKER_NAME}_minio-http.middlewares=${DOCKER_NAME}_minio-https"
+      - "traefik.http.middlewares.${DOCKER_NAME}_minio-https.redirectscheme.scheme=https"
+      # Enable Whoami handler entrypoint on https.
+      - "traefik.http.routers.${DOCKER_NAME}_minio.entrypoints=websecure"
+      # Define Whoami handler host.
+      - traefik.http.routers.${DOCKER_NAME}_minio.rule=HostRegexp(`{www:(?:www\.)?}minio.{domain:[a-z0-9.-_]+}`)
+      # Instructs Whoami that the current router is dedicated to HTTPS requests only.
+      - "traefik.http.routers.${DOCKER_NAME}_minio.tls=true"
+      # Define on which network Traefik is operating.
+      - "traefik.http.services.${DOCKER_NAME}_minio.loadbalancer.server.port=9001"
+
+      - "traefik.http.routers.${DOCKER_NAME}_minio-api.service=${DOCKER_NAME}_minio-api"
+      - "traefik.http.routers.${DOCKER_NAME}_minio-api-http.service=${DOCKER_NAME}_minio-api"
+      # Enable Whoami handler entrypoint on http.
+      - "traefik.http.routers.${DOCKER_NAME}_minio-api-http.entrypoints=web"
+      # Define Whoami handler http host.
+      - traefik.http.routers.${DOCKER_NAME}_minio-api-http.rule=HostRegexp(`{www:(?:www\.)?}minio-api.{domain:[a-z0-9.-_]+}`)
+      # Define http middleware and redirection to https.
+      - "traefik.http.routers.${DOCKER_NAME}_minio-api-http.middlewares=${DOCKER_NAME}_minio-api-https"
+      - "traefik.http.middlewares.${DOCKER_NAME}_minio-api-https.redirectscheme.scheme=https"
+      # Enable Whoami handler entrypoint on https.
+      - "traefik.http.routers.${DOCKER_NAME}_minio-api.entrypoints=websecure"
+      # Define Whoami handler host.
+      - traefik.http.routers.${DOCKER_NAME}_minio-api.rule=HostRegexp(`{www:(?:www\.)?}minio-api.{domain:[a-z0-9.-_]+}`)
+      # Instructs Whoami that the current router is dedicated to HTTPS requests only.
+      - "traefik.http.routers.${DOCKER_NAME}_minio-api.tls=true"
+      # Define on which network Traefik is operating.
+      - "traefik.http.services.${DOCKER_NAME}_minio-api.loadbalancer.server.port=9000" 
+
+volumes:
+  minio-data:
+
+networks:
+  traefik-public:
+    external: true
