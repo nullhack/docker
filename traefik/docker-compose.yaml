@@ -5,6 +5,7 @@ services:
     image: traefik:v2.6.1
     container_name: "${DOCKER_NAME}_traefik"
     command:
+      # provider
       - --providers.docker=true
       # Enable the API handler in insecure mode,
       # which means that the Traefik API will be available directly
@@ -17,7 +18,7 @@ services:
       - --entrypoints.websecure.address=:443
     networks:
       # Define the network on which traefik is going to operate.
-      - traefik-public
+      - traefik-public-network
     ports:
       # Open traefik http [80] and https [443] ports.
       - '80:80'
@@ -29,15 +30,63 @@ services:
       # Mount the folder containing the certificates for https.
       - ./certs/:/certs/
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.traefik.middlewares=traefik-auth
+      - "traefik.enable=true"
+      # Enable Traefik API handler entrypoint on http.
+      - "traefik.http.routers.traefik-http.entrypoints=web"
+      # authentication
       - traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_DASHBOARD_AUTH}
-      - traefik.http.services.traefik.loadbalancer.server.port=8080
+      # Define Traefik API handler http host.
+      # set network
+      - "traefik.docker.network=traefik-public"
+      #- traefik.http.routers.traefik-http.rule=Host(`s0.lan`)
+      - traefik.http.routers.traefik-http.rule=HostRegexp(`{www:(?:www\.)?}traefik.{domain:[a-z0-9.-_]+}`)
+      # Define http middleware and redirection to https.
+      - "traefik.http.routers.traefik-http.middlewares=traefik-https"
+      - "traefik.http.middlewares.traefik-https.redirectscheme.scheme=https"
+      # Enable Traefik API handler entrypoint on https.
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      # By default the Traefik API handler operates on the port [8080].
+      # Define a load balancer to route the entry point to [8080].
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+      # Define Traefik API handler host.
+      #- traefik.http.routers.traefik.rule=Host(`s0.lan`)
       - traefik.http.routers.traefik.rule=HostRegexp(`{www:(?:www\.)?}traefik.{domain:[a-z0-9.-_]+}`)
-      - traefik.http.routers.traefik.entrypoints=websecure
-      - traefik.http.routers.traefik.tls.certresolver=letsencryptresolver
+      #- traefik.http.routers.traefik.rule=HostRegexp(`{www:(?:www\.)?}traefik.{domain:[a-z0-9.-_]+}`)
+      # Instructs Traefik that the current router is dedicated to HTTPS requests only.
+      - "traefik.http.routers.traefik.tls=true"
+      # define services
+      - traefik.http.routers.traefik-http.service=api@internal
       - traefik.http.routers.traefik.service=api@internal
+      # error pages
+      #- "traefik.http.middlewares.traefik.errors.status=400-599"
+      #- "traefik.http.middlewares.traefik.errors.service=serviceError"
+      #- "traefik.http.middlewares.traefik.errors.query=/{status}.html"
+
+  err_page:
+    image: ghcr.io/tarampampam/error-pages
+    container_name: "${DOCKER_NAME}_err_page"
+    networks:
+      - traefik-public-network
+    labels:
+      # Enable Whoami handler entrypoint on http.
+      - "traefik.http.routers.${DOCKER_NAME}_err_page-http.entrypoints=web"
+      # Define Whoami handler http host.
+      - traefik.http.routers.${DOCKER_NAME}_err_page-http.rule=HostRegexp(`{host:.+}`)
+      # Define http middleware and redirection to https.
+      - "traefik.http.routers.${DOCKER_NAME}_err_page-http.middlewares=${DOCKER_NAME}_err_page-https"
+      - "traefik.http.middlewares.${DOCKER_NAME}_err_page-https.redirectscheme.scheme=https"
+      # Enable Whoami handler entrypoint on https.
+      - "traefik.http.routers.${DOCKER_NAME}_err_page.entrypoints=websecure"
+      # Define Whoami handler host.
+      - traefik.http.routers.${DOCKER_NAME}_err_page.rule=HostRegexp(`{host:.+}`)
+      # Instructs Whoami that the current router is dedicated to HTTPS requests only.
+      - "traefik.http.routers.${DOCKER_NAME}_err_page.tls=true"
+      # Define on which network Traefik is operating.
+      - "traefik.docker.network=traefik-public-network"
+      # Added
+      #- traefik.http.routers.${DOCKER_NAME}_err_page.service=error-pages
+      - "traefik.http.services.${DOCKER_NAME}_err_page.loadbalancer.server.port=8080"
 
 networks:
-  traefik-public:
+  traefik-public-network:
     external: true
