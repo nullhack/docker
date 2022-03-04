@@ -6,20 +6,34 @@ services:
     image: registry:2.7.0
     container_name: registry
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.registry.middlewares=registry-auth
-      - traefik.http.middlewares.registry-auth.basicauth.users=${REGISTRY_DASHBOARD_AUTH}
-      - traefik.http.services.registry.loadbalancer.server.port=62443
-      - traefik.http.routers.registry.rule=HostRegexp(`{www:(?:www\.)?}registry.{domain:[a-z0-9.-_]+}`)
-      - traefik.http.routers.registry.entrypoints=websecure
-      - traefik.http.routers.registry.tls.certresolver=letsencryptresolver
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.${DOCKER_NAME}_registry.service=${DOCKER_NAME}_registry"
+      - "traefik.http.routers.${DOCKER_NAME}_registry-http.service=${DOCKER_NAME}_registry"
+      # Enable registry handler entrypoint on http.
+      - "traefik.http.routers.${DOCKER_NAME}_registry-http.entrypoints=web"
+      # Define registry handler http host.
+      - traefik.http.routers.${DOCKER_NAME}_registry-http.rule=HostRegexp(`{www:(?:www\.)?}registry.{domain:[a-z0-9.-_]+}`)
+      # Define http middleware and redirection to https.
+      - "traefik.http.routers.${DOCKER_NAME}_registry-http.middlewares=${DOCKER_NAME}_registry-https"
+      - "traefik.http.middlewares.${DOCKER_NAME}_registry-https.redirectscheme.scheme=https"
+      # Enable registry handler entrypoint on https.
+      - "traefik.http.routers.${DOCKER_NAME}_registry.entrypoints=websecure"
+      # Define registry handler host.
+      - traefik.http.routers.${DOCKER_NAME}_registry.rule=HostRegexp(`{www:(?:www\.)?}registry.{domain:[a-z0-9.-_]+}`)
+      # Instructs registry that the current router is dedicated to HTTPS requests only.
+      - "traefik.http.routers.${DOCKER_NAME}_registry.tls=true"
+      # Define on which network Traefik is operating.
+      - "traefik.http.services.${DOCKER_NAME}_registry.loadbalancer.server.port=5000"
+
     restart: unless-stopped
     environment:
-      - REGISTRY_HTTP_ADDR=0.0.0.0:62443
+      #- REGISTRY_HTTP_ADDR=0.0.0.0:62443
+      - REGISTRY_HTTP_RELATIVEURLS=true
     networks:
-      - traefik_network
+      - traefik-network
 
 networks:
-  traefik_network:
+  traefik-network:
     external: true
       
