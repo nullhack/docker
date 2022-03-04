@@ -1,4 +1,4 @@
-[ -n "$(sudo docker network ls -q -f name=traefik-network)" ] || sudo docker network create --driver bridge --attachable traefik-network
+[ -n "$(sudo docker network ls -q -f name=traefik-public-network)" ] || sudo docker network create --driver bridge --attachable traefik-public-network
 
 if [ -f .env ]; then
   export $(echo $(cat .env | sed 's/#.*//g'| xargs) | envsubst)
