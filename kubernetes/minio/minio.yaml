@@ -1,0 +1,24 @@
+auth:
+  rootUser: minio-user
+  rootPassword: minio-password
+##
+containerPorts:
+  api: 9000
+  console: 9001
+##
+service:
+  ports:
+    api: 9000
+    console: 9001
+  nodePorts:
+    api: 9000
+    console: 9001
+##
+ingress:
+  enabled: true
+  hostname: minio.localhost
+##
+apiIngress:
+  enabled: true
+  hostname: minio-api.localhost
+
