@@ -28,12 +28,11 @@ services:
 
     restart: unless-stopped
     environment:
-      #- REGISTRY_HTTP_ADDR=0.0.0.0:62443
       - REGISTRY_HTTP_RELATIVEURLS=true
     networks:
-      - traefik-network
+      - traefik-public-network
 
 networks:
-  traefik-network:
+  traefik-public-network:
     external: true
       

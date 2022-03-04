@@ -57,10 +57,6 @@ services:
       # define services
       - traefik.http.routers.traefik-http.service=api@internal
       - traefik.http.routers.traefik.service=api@internal
-      # error pages
-      #- "traefik.http.middlewares.traefik.errors.status=400-599"
-      #- "traefik.http.middlewares.traefik.errors.service=serviceError"
-      #- "traefik.http.middlewares.traefik.errors.query=/{status}.html"
 
   err_page:
     image: ghcr.io/tarampampam/error-pages
@@ -71,14 +67,14 @@ services:
       # Enable Whoami handler entrypoint on http.
       - "traefik.http.routers.${DOCKER_NAME}_err_page-http.entrypoints=web"
       # Define Whoami handler http host.
-      - traefik.http.routers.${DOCKER_NAME}_err_page-http.rule=HostRegexp(`{host:.+}`)
+      - traefik.http.routers.${DOCKER_NAME}_err_page-http.rule=HostRegexp(`{www:(?:www\.)?}error.{domain:[a-z0-9.-_]+}`)
       # Define http middleware and redirection to https.
       - "traefik.http.routers.${DOCKER_NAME}_err_page-http.middlewares=${DOCKER_NAME}_err_page-https"
       - "traefik.http.middlewares.${DOCKER_NAME}_err_page-https.redirectscheme.scheme=https"
       # Enable Whoami handler entrypoint on https.
       - "traefik.http.routers.${DOCKER_NAME}_err_page.entrypoints=websecure"
       # Define Whoami handler host.
-      - traefik.http.routers.${DOCKER_NAME}_err_page.rule=HostRegexp(`{host:.+}`)
+      - traefik.http.routers.${DOCKER_NAME}_err_page.rule=HostRegexp(`{www:(?:www\.)?}error.{domain:[a-z0-9.-_]+}`)
       # Instructs Whoami that the current router is dedicated to HTTPS requests only.
       - "traefik.http.routers.${DOCKER_NAME}_err_page.tls=true"
       # Define on which network Traefik is operating.
