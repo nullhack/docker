@@ -18,8 +18,6 @@ services:
       - "MINIO_ROOT_USER=${MINIO_ROOT_USER_ADMIN}"
       - "MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD_ADMIN}"
       # Do NOT use MINIO_DOMAIN or MINIO_SERVER_URL with Traefik.
-      # All Routing is done by Traefik, just tell minio where to redirect to.
-      #- "MINIO_BROWSER_REDIRECT_URL=https://minio-api.${DOCKER_BASE_URL}"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
