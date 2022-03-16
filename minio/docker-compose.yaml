@@ -64,6 +64,11 @@ services:
 
 volumes:
   minio-data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: "${HOME}/data"
 
 networks:
   traefik-public-network:
