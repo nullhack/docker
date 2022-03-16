@@ -7,7 +7,7 @@ services:
     networks:
       - traefik-public-network
     volumes:
-      - minio-data:/data
+      - /minio-data:/data
     command:
       - server
       - /data
@@ -62,13 +62,6 @@ services:
       # Define on which network Traefik is operating.
       - "traefik.http.services.${DOCKER_NAME}_minio-api.loadbalancer.server.port=9000" 
 
-volumes:
-  minio-data:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: "${HOME}/data"
 
 networks:
   traefik-public-network:
